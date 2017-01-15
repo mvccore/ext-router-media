@@ -1,6 +1,6 @@
 # MvcCore Extension - Media Address
 MvcCore Router extension to manage your website media version for different 
-template and css files rendering.
+templates/css/js files rendering.
 
 ## Features
 - recognizes user device by useragent with Mobile_Detect library into full/tablet/mobile

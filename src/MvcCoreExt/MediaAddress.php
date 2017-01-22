@@ -138,8 +138,8 @@ class MvcCoreExt_MediaAddress extends MvcCore_Router {
 
 	/**
 	 * Generates url by:
-	 * - Controller::Action name and params array
-	 *   (for routes configuration when routes array has keys with Controller::Action strings
+	 * - 'Controller:Action' name and params array
+	 *   (for routes configuration when routes array has keys with 'Controller:Action' strings
 	 *   and routes has not controller name and action name defined inside)
 	 * - route name and params array
 	 *	 (route name is key in routes configuration array, should be any string
@@ -149,7 +149,7 @@ class MvcCoreExt_MediaAddress extends MvcCore_Router {
 	 *   (for apps with .htaccess supporting url_rewrite and when first param is key in routes configuration array)
 	 * - for all other cases is url form: index.php?controller=ctrlName&action=actionName
 	 *	 (when first param is not founded in routes configuration array)
-	 * @param string $controllerActionOrRouteName	Should be Controller::Action combination or just any route name as custom specific string
+	 * @param string $controllerActionOrRouteName	Should be 'Controller:Action' combination or just any route name as custom specific string
 	 * @param array  $params						optional
 	 * @return string
 	 */
@@ -162,7 +162,7 @@ class MvcCoreExt_MediaAddress extends MvcCore_Router {
 		}
 		$url = parent::Url($name, $params);
 		if (!isset($this->routes[$name]) && $name != 'self') return $url;
-		if (strpos($name, 'Controller::Asset') === 0) return $url;
+		if (strpos($name, 'Controller:Asset') === 0) return $url;
 		return $this->AllowedSiteKeysAndUrlPrefixes[$mediaSiteKey] . $url;
 	}
 

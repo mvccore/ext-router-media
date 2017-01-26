@@ -1,7 +1,7 @@
-# MvcCore Extension - Media Address
+# MvcCore Extension - Media Router
 
-[![Latest Stable Version](https://img.shields.io/badge/Stable-v3.1.0-brightgreen.svg?style=plastic)](https://github.com/mvccore/example-helloworld/releases)
-[![License](https://img.shields.io/badge/Licence-BSD-brightgreen.svg?style=plastic)](https://github.com/mvccore/example-helloworld/blob/master/LICENCE.md)
+[![Latest Stable Version](https://img.shields.io/badge/Stable-v3.2.0-brightgreen.svg?style=plastic)](https://github.com/mvccore/ext-media-router/releases)
+[![License](https://img.shields.io/badge/Licence-BSD-brightgreen.svg?style=plastic)](https://mvccore.github.io/docs/mvccore/3.0.0/LICENCE.md)
 ![PHP Version](https://img.shields.io/badge/PHP->=5.3-brightgreen.svg?style=plastic)
 
 MvcCore Router extension to manage your website media version for different 
@@ -19,7 +19,7 @@ templates/css/js files rendering.
 
 ## Installation
 ```shell
-composer require mvccore/ext-media-address
+composer require mvccore/ext-media-router
 ```
 
 ## Usage
@@ -27,7 +27,7 @@ Add this to **Bootstrap.php** or to **very application beginning**,
 before application routing or any other extension configuration
 using router for any purposes:
 ```php
-MvcCore::GetInstance()->SetRouterClass(MvcCoreExt_MediaAddress::class);
+MvcCore::GetInstance()->SetRouterClass(MvcCoreExt_MediaRouter::class);
 ```
 
 ## Configuration
@@ -39,7 +39,7 @@ where is no prefix in url, because all regular expressions in Mobile_Detect
 library could takes some time. By **default** there is **1 hour**. 
 You can change it by:
 ```php
-MvcCoreExt_MediaAddress::GetInstance()->SetSessionExpirationSeconds(86400); // day
+MvcCoreExt_MediaRouter::GetInstance()->SetSessionExpirationSeconds(86400); // day
 ```
 But it's not practicly necessary, because if there is necessary to detect
 user device again, it's not so often when the detection process is only 
@@ -51,7 +51,7 @@ To allow only some media site versions and configure url prefixes, you can use:
 ```php
 // to allow only mobile version (with url prefix '/mobile') 
 // and full version (with no url prefix):
-MvcCoreExt_MediaAddress::GetInstance()->SetAllowedSiteKeysAndUrlPrefixes(array(
+MvcCoreExt_MediaRouter::GetInstance()->SetAllowedSiteKeysAndUrlPrefixes(array(
 	MediaSiteKey::MOBILE	=> '/mobile',
 	MediaSiteKey::FULL		=> '',
 ));
@@ -71,5 +71,5 @@ special $_GET param "media_site_key" like:
 ```
 you need to configure router into strict session mode by:
 ```php
-MvcCoreExt_MediaAddress::GetInstance()->SetStricModeBySession();
+MvcCoreExt_MediaRouter::GetInstance()->SetStricModeBySession();
 ```

@@ -1,5 +1,5 @@
 {
-	"name": "mvccore/ext-media-address",
+	"name": "mvccore/ext-media-router",
 	"description": "MvcCore_Router extension - media site version (full/tablet/mobile) flag in every GET url.",
 	"keywords": ["mvccore", "framework", "mvc", "router", "media", "site", "version", "flag", "address", "full", "tablet", "mobile"],
 	"license": ["BSD-3-Clause"],

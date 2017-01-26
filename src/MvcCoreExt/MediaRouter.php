@@ -17,7 +17,7 @@ class MediaSiteKey {
 	const MOBILE = 'mobile';
 }
 
-class MvcCoreExt_MediaAddress extends MvcCore_Router {
+class MvcCoreExt_MediaRouter extends MvcCore_Router {
 
 	const MEDIA_SITE_KEY_URL_PARAM = 'mediaSiteKey';
 	const MEDIA_SITE_KEY_SWITCH_URL_PARAM = 'media_site_key';
@@ -102,7 +102,7 @@ class MvcCoreExt_MediaAddress extends MvcCore_Router {
 	 * @var int
 	 */
 	public function SetSessionExpirationSeconds ($sessionExpirationSeconds = 3600) {
-		$this->SetSessionExpirationSeconds = $sessionExpirationSeconds;
+		$this->SessionExpirationSeconds = $sessionExpirationSeconds;
 		return $this;
 	}
 
@@ -112,7 +112,7 @@ class MvcCoreExt_MediaAddress extends MvcCore_Router {
 	 * Key is media site version value and value is url prefix how to describe 
 	 * media site version in url.
 	 * @param array $allowedSiteKeysAndUrlPrefixes 
-	 * @return MvcCoreExt_MediaAddress
+	 * @return MvcCoreExt_MediaRouter
 	 */
 	public function SetAllowedSiteKeysAndUrlPrefixes ($allowedSiteKeysAndUrlPrefixes = array()) {
 		$this->AllowedSiteKeysAndUrlPrefixes = $allowedSiteKeysAndUrlPrefixes;
@@ -129,7 +129,7 @@ class MvcCoreExt_MediaAddress extends MvcCore_Router {
 	 * contains some version and in session is different, store in session media
 	 * site version from request and do not redirect user.
 	 * @param bool $stricModeBySession 
-	 * @return MvcCoreExt_MediaAddress
+	 * @return MvcCoreExt_MediaRouter
 	 */
 	public function SetStricModeBySession ($stricModeBySession = TRUE) {
 		$this->stricModeBySession = $stricModeBySession;
@@ -185,6 +185,7 @@ class MvcCoreExt_MediaAddress extends MvcCore_Router {
 	public function ProcessMediaSiteVersion (MvcCore_Request & $request)
 	{
 		$this->request = & $request;
+		$this->request->OriginalPath = $this->request->Path;
 		// switching media site version will be only by get:
 		$this->isGet = $request->Method == MvcCore_Request::METHOD_GET;
 		// look into request params if are we just switching any new site media version
@@ -238,7 +239,7 @@ class MvcCoreExt_MediaAddress extends MvcCore_Router {
 		unset($_GET[static::MEDIA_SITE_KEY_SWITCH_URL_PARAM]);
 		// unset site key switch param and redirect to no switch param uri version
 		$query = count($_GET) > 0 ? '?' . http_build_query($_GET) : '';
-		$targetUrl = $this->request->Protocol . '//' . $this->request->Host . $this->request->BasePath
+		$targetUrl = $this->request->DomainUrl . $this->request->BasePath
 			. $this->AllowedSiteKeysAndUrlPrefixes[$mediaSiteKey] . $this->request->Path . $query;
 		MvcCore_Controller::Redirect($targetUrl);
 	}
@@ -309,4 +310,4 @@ class MvcCoreExt_MediaAddress extends MvcCore_Router {
 		}
 	}
 }
-MvcCoreExt_MediaAddress::StaticInit();
+MvcCoreExt_MediaRouter::StaticInit();

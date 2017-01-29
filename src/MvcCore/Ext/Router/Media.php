@@ -154,33 +154,34 @@ class Media extends \MvcCore\Router {
 	}
 
 	/**
-	 * Generates url by:
-	 * - 'Controller:Action' name and params array
-	 *   (for routes configuration when routes array has keys with 'Controller:Action' strings
-	 *   and routes has not controller name and action name defined inside)
-	 * - route name and params array
-	 *	 (route name is key in routes configuration array, should be any string
-	 *	 but routes must have information about controller name and action name inside)
-	 * Result address should have two forms:
-	 * - nice rewrited url by routes configuration
-	 *   (for apps with .htaccess supporting url_rewrite and when first param is key in routes configuration array)
-	 * - for all other cases is url form: index.php?controller=ctrlName&action=actionName
-	 *	 (when first param is not founded in routes configuration array)
-	 * @param string $controllerActionOrRouteName	Should be 'Controller:Action' combination or just any route name as custom specific string
-	 * @param array  $params						optional
+	 * Complete url by route instance reverse info
+	 * @param string $controllerActionOrRouteName
+	 * @param array  $params
 	 * @return string
 	 */
-	public function Url ($name = '', $params = array()) {
-		if (isset($params[static::MEDIA_SITE_KEY_URL_PARAM])) {
-			$mediaSiteKey = $params[static::MEDIA_SITE_KEY_URL_PARAM];
-			unset($params[static::MEDIA_SITE_KEY_URL_PARAM]);
+	protected function urlByRoute ($controllerActionOrRouteName, $params) {
+		$route = $this->urlRoutes[$controllerActionOrRouteName];
+		$allParams = array_merge(
+			is_array($route->Params) ? $route->Params : array(), $params
+		);
+		$mediaSiteKey = '';
+		if (isset($allParams[static::MEDIA_SITE_KEY_URL_PARAM])) {
+			$mediaSiteKey = $allParams[static::MEDIA_SITE_KEY_URL_PARAM];
+			unset($allParams[static::MEDIA_SITE_KEY_URL_PARAM]);
 		} else {
 			$mediaSiteKey = $this->mediaSiteKey;
 		}
-		$url = parent::Url($name, $params);
-		if (!isset($this->routes[$name]) && $name != 'self') return $url;
-		if (strpos($name, 'Controller:Asset') === 0) return $url;
-		return $this->AllowedSiteKeysAndUrlPrefixes[$mediaSiteKey] . $url;
+		$result = rtrim($route->Reverse, '?&');
+		foreach ($allParams as $key => $value) {
+			$paramKeyReplacement = "{%$key}";
+			if (mb_strpos($result, $paramKeyReplacement) === FALSE) {
+				$glue = (mb_strpos($result, '?') === FALSE) ? '?' : '&';
+				$result .= $glue . http_build_query(array($key => $value));
+			} else {
+				$result = str_replace($paramKeyReplacement, $value, $result);
+			}
+		}
+		return $this->request->BasePath . $this->AllowedSiteKeysAndUrlPrefixes[$mediaSiteKey] . $result;
 	}
 
 	/**

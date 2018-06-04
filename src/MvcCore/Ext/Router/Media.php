@@ -55,11 +55,11 @@ class Media extends \MvcCore\Router {
 	 * to describe media site version in url.
 	 * @var array
 	 */
-	public $AllowedSiteKeysAndUrlPrefixes = array(
+	public $AllowedSiteKeysAndUrlPrefixes = [
 		MediaSiteKey::MOBILE	=> '/m',
 		MediaSiteKey::TABLET	=> '/t',
 		MediaSiteKey::FULL		=> '',
-	);
+	];
 
 	/**
 	 * Session record is always used to compare if user is requesting different media
@@ -131,7 +131,7 @@ class Media extends \MvcCore\Router {
 	 * @param array $allowedSiteKeysAndUrlPrefixes
 	 * @return \MvcCore\Ext\Router\Media
 	 */
-	public function SetAllowedSiteKeysAndUrlPrefixes ($allowedSiteKeysAndUrlPrefixes = array()) {
+	public function SetAllowedSiteKeysAndUrlPrefixes ($allowedSiteKeysAndUrlPrefixes = []) {
 		$this->AllowedSiteKeysAndUrlPrefixes = $allowedSiteKeysAndUrlPrefixes;
 		return $this;
 	}
@@ -162,7 +162,7 @@ class Media extends \MvcCore\Router {
 	protected function urlByRoute ($controllerActionOrRouteName, $params) {
 		$route = $this->urlRoutes[$controllerActionOrRouteName];
 		$allParams = array_merge(
-			is_array($route->Params) ? $route->Params : array(), $params
+			is_array($route->Params) ? $route->Params : [], $params
 		);
 		$mediaSiteKey = '';
 		if (isset($allParams[static::MEDIA_SITE_KEY_URL_PARAM])) {
@@ -176,7 +176,7 @@ class Media extends \MvcCore\Router {
 			$paramKeyReplacement = "{%$key}";
 			if (mb_strpos($result, $paramKeyReplacement) === FALSE) {
 				$glue = (mb_strpos($result, '?') === FALSE) ? '?' : '&';
-				$result .= $glue . http_build_query(array($key => $value));
+				$result .= $glue . http_build_query([$key => $value]);
 			} else {
 				$result = str_replace($paramKeyReplacement, $value, $result);
 			}

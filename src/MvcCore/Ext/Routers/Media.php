@@ -11,7 +11,7 @@
  * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
  */
 
-namespace MvcCore\Ext\Router;
+namespace MvcCore\Ext\Routers;
 
 class MediaSiteKey {
 	const FULL = 'full';
@@ -26,7 +26,7 @@ class Media extends \MvcCore\Router {
 	 * Comparation by PHP function version_compare();
 	 * @see http://php.net/manual/en/function.version-compare.php
 	 */
-	const VERSION = '4.3.1';
+	const VERSION = '5.0.0-alpha';
 
 	/**
 	 * Key name for media version in second argument $params in $router->Url();  method,
@@ -103,11 +103,17 @@ class Media extends \MvcCore\Router {
 	 * Static initialization - called when class is included by autoloader
 	 * @return void
 	 */
-	public static function StaticInit () {
-		\MvcCore::AddPreRouteHandler(function (\MvcCore\Request & $request, \MvcCore\Response & $response) {
-			\MvcCore::SessionStart();
-			static::GetInstance()->ProcessMediaSiteVersion($request);
-		});
+	public static function & GetInstance ($routes = []) {
+		$router = parent::GetInstance($routes);
+		$app = \MvcCore\Application::GetInstance();
+		xxx($router);
+		$app->AddPreRouteHandler(
+			function (\MvcCore\Request & $request, \MvcCore\Response & $response) use (& $app, & $router) {
+				/** @var $app \MvcCore\Application */
+				$app->SessionStart();
+				$router->ProcessMediaSiteVersion($request);
+			}
+		);
 	}
 
 	/**
@@ -129,7 +135,7 @@ class Media extends \MvcCore\Router {
 	 * Key is media site version value and value is url prefix how to describe
 	 * media site version in url.
 	 * @param array $allowedSiteKeysAndUrlPrefixes
-	 * @return \MvcCore\Ext\Router\Media
+	 * @return \MvcCore\Ext\Routers\Media
 	 */
 	public function SetAllowedSiteKeysAndUrlPrefixes ($allowedSiteKeysAndUrlPrefixes = []) {
 		$this->AllowedSiteKeysAndUrlPrefixes = $allowedSiteKeysAndUrlPrefixes;
@@ -146,7 +152,7 @@ class Media extends \MvcCore\Router {
 	 * contains some version and in session is different, store in session media
 	 * site version from request and do not redirect user.
 	 * @param bool $stricModeBySession
-	 * @return \MvcCore\Ext\Router\Media
+	 * @return \MvcCore\Ext\Routers\Media
 	 */
 	public function SetStricModeBySession ($stricModeBySession = TRUE) {
 		$this->stricModeBySession = $stricModeBySession;
@@ -155,14 +161,13 @@ class Media extends \MvcCore\Router {
 
 	/**
 	 * Complete url by route instance reverse info
-	 * @param string $controllerActionOrRouteName
-	 * @param array  $params
+	 * @param \MvcCore\Route &$route
+	 * @param array $params
 	 * @return string
 	 */
-	protected function urlByRoute ($controllerActionOrRouteName, $params) {
-		$route = $this->urlRoutes[$controllerActionOrRouteName];
+	public function UrlByRoute (\MvcCore\Interfaces\IRoute & $route, & $params = []) {
 		$allParams = array_merge(
-			is_array($route->Params) ? $route->Params : [], $params
+			is_array($route->GetDefaults()) ? $route->GetDefaults() : [], $params
 		);
 		$mediaSiteKey = '';
 		if (isset($allParams[static::MEDIA_SITE_KEY_URL_PARAM])) {
@@ -171,7 +176,7 @@ class Media extends \MvcCore\Router {
 		} else {
 			$mediaSiteKey = $this->mediaSiteKey;
 		}
-		$result = rtrim($route->Reverse, '?&');
+		$result = rtrim($route->GetReverse(), '?&');
 		foreach ($allParams as $key => $value) {
 			$paramKeyReplacement = "{%$key}";
 			if (mb_strpos($result, $paramKeyReplacement) === FALSE) {
@@ -181,7 +186,7 @@ class Media extends \MvcCore\Router {
 				$result = str_replace($paramKeyReplacement, $value, $result);
 			}
 		}
-		return $this->request->BasePath . $this->AllowedSiteKeysAndUrlPrefixes[$mediaSiteKey] . $result;
+		return $this->request->GetBasePath() . $this->AllowedSiteKeysAndUrlPrefixes[$mediaSiteKey] . $result;
 	}
 
 	/**
@@ -328,4 +333,3 @@ class Media extends \MvcCore\Router {
 		}
 	}
 }
-Media::StaticInit();

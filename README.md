@@ -26,7 +26,7 @@ Add this to `Bootstrap.php` or to **very application beginning**,
 before application routing or any other extension configuration
 using router for any purposes:
 ```php
-\MvcCore::GetInstance()->SetRouterClass(\MvcCore\Ext\Router\Media::class);
+\MvcCore\Application::GetInstance()->SetRouterClass(\MvcCore\Ext\Routers\Media::class);
 ```
 
 ## Configuration
@@ -38,7 +38,7 @@ where is no prefix in url, because all regular expressions in `Mobile_Detect`
 library could takes some time. By **default** there is **1 hour**. 
 You can change it by:
 ```php
-\MvcCore\Ext\Router\Media::GetInstance()->SetSessionExpirationSeconds(86400); // day
+\MvcCore\Ext\Routers\Media::GetInstance()->SetSessionExpirationSeconds(86400); // day
 ```
 But it's not practicly necessary, because if there is necessary to detect
 user device again, it's not so often when the detection process is only 
@@ -50,9 +50,9 @@ To allow only some media site versions and configure url prefixes, you can use:
 ```php
 // to allow only mobile version (with url prefix '/mobile') 
 // and full version (with no url prefix):
-\MvcCore\Ext\Router\Media::GetInstance()->SetAllowedSiteKeysAndUrlPrefixes(array(
-	\MvcCore\Ext\Router\MediaSiteKey::MOBILE	=> '/mobile',
-	\MvcCore\Ext\Router\MediaSiteKey::FULL		=> '',
+\MvcCore\Ext\Routers\Media::GetInstance()->SetAllowedSiteKeysAndUrlPrefixes(array(
+	\MvcCore\Ext\Routers\MediaSiteKey::MOBILE	=> '/mobile',
+	\MvcCore\Ext\Routers\MediaSiteKey::FULL		=> '',
 ));
 ```
 
@@ -70,5 +70,5 @@ special $_GET param "media_site_key" like:
 ```
 you need to configure router into strict session mode by:
 ```php
-\MvcCore\Ext\Router\Media::GetInstance()->SetStricModeBySession();
+\MvcCore\Ext\Routers\Media::GetInstance()->SetStricModeBySession();
 ```

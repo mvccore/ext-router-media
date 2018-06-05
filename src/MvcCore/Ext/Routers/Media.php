@@ -13,32 +13,8 @@
 
 namespace MvcCore\Ext\Routers;
 
-class MediaSiteKey {
-	const FULL = 'full';
-	const TABLET = 'tablet';
-	const MOBILE = 'mobile';
-}
-
-class Media extends \MvcCore\Router {
-
-	/**
-	 * MvcCore Extension - Router Media - version:
-	 * Comparation by PHP function version_compare();
-	 * @see http://php.net/manual/en/function.version-compare.php
-	 */
-	const VERSION = '5.0.0-alpha';
-
-	/**
-	 * Key name for media version in second argument $params in $router->Url();  method,
-	 * to tell $router->Url() method to generate different media version url.
-	 */
-	const MEDIA_SITE_KEY_URL_PARAM = 'mediaSiteKey';
-
-	/**
-	 * Special $_GET param name for session strict mode, how to change site media version.
-	 */
-	const MEDIA_SITE_KEY_SWITCH_URL_PARAM = 'media_site_key';
-
+class Media extends \MvcCore\Router implements \MvcCore\Ext\Routers\IMedia
+{
 	/**
 	 * Session expiration seconds for remembering detected media site version by user agent.
 	 * Session record is always used to compare if user is requesting different media
@@ -47,7 +23,7 @@ class Media extends \MvcCore\Router {
 	 * for described redirection.
 	 * @var int
 	 */
-	public $SessionExpirationSeconds = 3600; // hour
+	protected $sessionExpirationSeconds = 3600; // hour
 
 	/**
 	 * Url prefixes prepended before url paths to describe media site version in url.
@@ -55,37 +31,11 @@ class Media extends \MvcCore\Router {
 	 * to describe media site version in url.
 	 * @var array
 	 */
-	public $AllowedSiteKeysAndUrlPrefixes = [
-		MediaSiteKey::MOBILE	=> '/m',
-		MediaSiteKey::TABLET	=> '/t',
-		MediaSiteKey::FULL		=> '',
+	protected $allowedSiteKeysAndUrlPrefixes = [
+		IMedia::MEDIA_SITE_KEY_MOBILE	=> '/m',
+		IMedia::MEDIA_SITE_KEY_TABLET	=> '/t',
+		IMedia::MEDIA_SITE_KEY_FULL		=> '',
 	];
-
-	/**
-	 * Session record is always used to compare if user is requesting different media
-	 * site version then he has in session - if there is difference - user is redirected
-	 * to session media site version
-	 * @var \MvcCore\Session|\stdClass
-	 */
-	protected $session = NULL;
-
-	/**
-	 * Media site version founded in session.
-	 * @var string
-	 */
-	protected $sessionMediaSiteKey = '';
-
-	/**
-	 * Final media site key used in \MvcCore\Request object
-	 * @var string
-	 */
-	protected $mediaSiteKey = '';
-
-	/**
-	 * Media site version for switching, always initialized by special switching $_GET param.
-	 * @var string|bool
-	 */
-	protected $mediaSiteKeySwitchUriParam = FALSE;
 
 	/**
 	 * If true, process media site version strictly by session stored version,
@@ -100,20 +50,54 @@ class Media extends \MvcCore\Router {
 	protected $stricModeBySession = FALSE;
 
 	/**
+	 * Reference to global `$_GET` array in request object.
+	 * @var array
+	 */
+	protected $requestGlobalGet = [];
+	
+	/**
+	 * Media site version for switching, always initialized by special switching $_GET param.
+	 * @var string|NULL
+	 */
+	protected $mediaSiteKeySwitchUriParam = NULL;
+
+	/**
+	 * Final media site key used in \MvcCore\Request object
+	 * @var string
+	 */
+	protected $mediaSiteKey = NULL;
+
+	/**
+	 * Media site version founded in session.
+	 * @var string
+	 */
+	protected $sessionMediaSiteKey = NULL;
+
+	/**
+	 * Session record is always used to compare if user is requesting different media
+	 * site version then he has in session - if there is difference - user is redirected
+	 * to session media site version
+	 * @var \MvcCore\Session|\stdClass
+	 */
+	protected $session = NULL;
+
+	/**
+	 * Reference to `\MvcCore\Application::GetInstance();`.
+	 * @var \MvcCore\Interfaces\IApplication
+	 */
+	protected static $application = NULL;
+
+	/**
 	 * Static initialization - called when class is included by autoloader
 	 * @return void
 	 */
 	public static function & GetInstance ($routes = []) {
 		$router = parent::GetInstance($routes);
-		$app = \MvcCore\Application::GetInstance();
-		xxx($router);
-		$app->AddPreRouteHandler(
-			function (\MvcCore\Request & $request, \MvcCore\Response & $response) use (& $app, & $router) {
-				/** @var $app \MvcCore\Application */
-				$app->SessionStart();
-				$router->ProcessMediaSiteVersion($request);
-			}
-		);
+		static::$application = \MvcCore\Application::GetInstance();
+		static::$application
+			->AddPreRouteHandler($router->preRouteHandler)
+			->AddPreDispatchHandler($router->preDispatchHandler);
+		return $router;
 	}
 
 	/**
@@ -122,10 +106,11 @@ class Media extends \MvcCore\Router {
 	 * site version then he has in session - if there is difference - user is redirected
 	 * to session media site version and this seconds is time to remember that sessio record
 	 * for described redirection.
-	 * @var int
+	 * @param int $sessionExpirationSeconds
+	 * @return \MvcCore\Ext\Routers\Media
 	 */
-	public function SetSessionExpirationSeconds ($sessionExpirationSeconds = 3600) {
-		$this->SessionExpirationSeconds = $sessionExpirationSeconds;
+	public function & SetSessionExpirationSeconds ($sessionExpirationSeconds = 3600) {
+		$this->sessionExpirationSeconds = $sessionExpirationSeconds;
 		return $this;
 	}
 
@@ -137,8 +122,8 @@ class Media extends \MvcCore\Router {
 	 * @param array $allowedSiteKeysAndUrlPrefixes
 	 * @return \MvcCore\Ext\Routers\Media
 	 */
-	public function SetAllowedSiteKeysAndUrlPrefixes ($allowedSiteKeysAndUrlPrefixes = []) {
-		$this->AllowedSiteKeysAndUrlPrefixes = $allowedSiteKeysAndUrlPrefixes;
+	public function & SetAllowedSiteKeysAndUrlPrefixes ($allowedSiteKeysAndUrlPrefixes = []) {
+		$this->allowedSiteKeysAndUrlPrefixes = $allowedSiteKeysAndUrlPrefixes;
 		return $this;
 	}
 
@@ -161,32 +146,32 @@ class Media extends \MvcCore\Router {
 
 	/**
 	 * Complete url by route instance reverse info
-	 * @param \MvcCore\Route &$route
+	 * @param \MvcCore\Route|\MvcCore\Interfaces\IRoute &$route
 	 * @param array $params
 	 * @return string
 	 */
 	public function UrlByRoute (\MvcCore\Interfaces\IRoute & $route, & $params = []) {
-		$allParams = array_merge(
-			is_array($route->GetDefaults()) ? $route->GetDefaults() : [], $params
-		);
+		/** @var $route \MvcCore\Route */
+		$cleanedRequestParams = $this->GetCleanedRequestParams();
 		$mediaSiteKey = '';
-		if (isset($allParams[static::MEDIA_SITE_KEY_URL_PARAM])) {
-			$mediaSiteKey = $allParams[static::MEDIA_SITE_KEY_URL_PARAM];
-			unset($allParams[static::MEDIA_SITE_KEY_URL_PARAM]);
+		if (isset($params[static::MEDIA_SITE_KEY_URL_PARAM])) {
+			$mediaSiteKey = $params[static::MEDIA_SITE_KEY_URL_PARAM];
+			unset($params[static::MEDIA_SITE_KEY_URL_PARAM]);
+		} else if (isset($cleanedRequestParams[static::MEDIA_SITE_KEY_URL_PARAM])) {
+			$mediaSiteKey = $cleanedRequestParams[static::MEDIA_SITE_KEY_URL_PARAM];
+			unset($cleanedRequestParams[static::MEDIA_SITE_KEY_URL_PARAM]);
 		} else {
 			$mediaSiteKey = $this->mediaSiteKey;
 		}
-		$result = rtrim($route->GetReverse(), '?&');
-		foreach ($allParams as $key => $value) {
-			$paramKeyReplacement = "{%$key}";
-			if (mb_strpos($result, $paramKeyReplacement) === FALSE) {
-				$glue = (mb_strpos($result, '?') === FALSE) ? '?' : '&';
-				$result .= $glue . http_build_query([$key => $value]);
-			} else {
-				$result = str_replace($paramKeyReplacement, $value, $result);
-			}
-		}
-		return $this->request->GetBasePath() . $this->AllowedSiteKeysAndUrlPrefixes[$mediaSiteKey] . $result;
+		$routeUrl = $route->Url(
+			$params, $cleanedRequestParams, $this->getQueryStringParamsSepatator()
+		);
+		$mediaSiteUrlPrefix  = $mediaSiteKey && isset($this->allowedSiteKeysAndUrlPrefixes[$mediaSiteKey])
+			? $this->allowedSiteKeysAndUrlPrefixes[$mediaSiteKey]
+			: '';
+		return $this->request->GetBasePath() 
+			. $mediaSiteUrlPrefix 
+			. $routeUrl;
 	}
 
 	/**
@@ -202,22 +187,28 @@ class Media extends \MvcCore\Router {
 	 *   - recognize media site version by Mobile_Detect third party library and store recognized version in this context and in session
 	 * - else set up media site version from session
 	 * - later if detected media site version is not the same as requested media site version - redirect to detected version
-	 * @param \MvcCore\Request $request
+	 * @param \MvcCore\Request|\MvcCore\Interfaces\IRequest &$request
+	 * @param \MvcCore\Response|\MvcCore\Interfaces\IResponse & $response
 	 * @return void
 	 */
-	public function ProcessMediaSiteVersion (\MvcCore\Request & $request)
-	{
+	protected function preRouteHandler (
+		\MvcCore\Interfaces\IRequest & $request, 
+		\MvcCore\Interfaces\IResponse & $response
+	) {
+		/** @var $request \MvcCore\Request */
 		$this->request = & $request;
-		$this->request->OriginalPath = $this->request->Path;
+		$request->SetOriginalPath($request->GetPath());
 		// switching media site version will be only by get:
-		$this->isGet = $request->Method == \MvcCore\Request::METHOD_GET;
+		$this->isGet = $request->GetMethod() == \MvcCore\Interfaces\IRequest::METHOD_GET;
 		// look into request params if are we just switching any new site media version
-		if (isset($_GET[static::MEDIA_SITE_KEY_SWITCH_URL_PARAM])) {
-			$this->mediaSiteKeySwitchUriParam = strtolower($_GET[static::MEDIA_SITE_KEY_SWITCH_URL_PARAM]);
+		$this->requestGlobalGet = & $request->GetGlobalCollection('get');
+		if (isset($this->requestGlobalGet[static::MEDIA_SITE_KEY_SWITCH_URL_PARAM])) {
+			$this->mediaSiteKeySwitchUriParam = strtolower($this->requestGlobalGet[static::MEDIA_SITE_KEY_SWITCH_URL_PARAM]);
 		}
 		// set up current media site version from url string
 		$this->setUpRequestMediaSiteKeyFromUrl();
-		// set up session object to look inside for something from previous requests
+		// Set up session object to look inside for something from previous requests. 
+		// This command starts the session if not started yet.
 		static::setUpSession();
 		// look into session object if there are or not any record about recognized device from previous request
 		if (isset($this->session->{static::MEDIA_SITE_KEY_URL_PARAM})) {
@@ -226,16 +217,16 @@ class Media extends \MvcCore\Router {
 
 		if (
 			$this->isGet &&
-			$this->mediaSiteKeySwitchUriParam !== FALSE &&
-			isset($this->AllowedSiteKeysAndUrlPrefixes[$this->mediaSiteKeySwitchUriParam])
+			$this->mediaSiteKeySwitchUriParam !== NULL &&
+			isset($this->allowedSiteKeysAndUrlPrefixes[$this->mediaSiteKeySwitchUriParam])
 		) {
 			$this->manageSwitchingAndRedirect();
 
 		} else if (
 			$this->isGet &&
 			(
-				$this->sessionMediaSiteKey === '' ||
-				!isset($this->AllowedSiteKeysAndUrlPrefixes[$this->sessionMediaSiteKey])
+				$this->sessionMediaSiteKey === NULL ||
+				!isset($this->allowedSiteKeysAndUrlPrefixes[$this->sessionMediaSiteKey])
 			)
 		) {
 			$this->manageDetectionAndStoreInSession();
@@ -246,7 +237,19 @@ class Media extends \MvcCore\Router {
 			$this->checkMediaSiteVersionWithRequestVersionAndRedirectIfDifferent();
 		}
 
-		$request->MediaSiteKey = $this->mediaSiteKey;
+		$request->SetMediaSiteKey($this->mediaSiteKey);
+	}
+
+	/**
+	 * @param \MvcCore\Request|\MvcCore\Interfaces\IRequest &$request
+	 * @param \MvcCore\Response|\MvcCore\Interfaces\IResponse & $response
+	 * @return void
+	 */
+	protected function preDispatchHandler (
+		\MvcCore\Interfaces\IRequest & $request, 
+		\MvcCore\Interfaces\IResponse & $response
+	) {
+		static::$application->GetController()->mediaSiteKey = $this->mediaSiteKey;
 	}
 
 	/**
@@ -259,12 +262,15 @@ class Media extends \MvcCore\Router {
 		$mediaSiteKey = $this->mediaSiteKeySwitchUriParam;
 		// store switched site key into session
 		$this->session->{static::MEDIA_SITE_KEY_URL_PARAM} = $mediaSiteKey;
-		unset($_GET[static::MEDIA_SITE_KEY_SWITCH_URL_PARAM]);
+		unset($this->requestGlobalGet[static::MEDIA_SITE_KEY_SWITCH_URL_PARAM]);
 		// unset site key switch param and redirect to no switch param uri version
-		$query = count($_GET) > 0 ? '?' . http_build_query($_GET) : '';
-		$targetUrl = $this->request->DomainUrl . $this->request->BasePath
-			. $this->AllowedSiteKeysAndUrlPrefixes[$mediaSiteKey] . $this->request->Path . $query;
-		\MvcCore\Controller::Redirect($targetUrl);
+		$request = & $this->request;
+		$targetUrl = $request->GetDomainUrl()
+			. $request->GetBasePath()
+			. $this->allowedSiteKeysAndUrlPrefixes[$mediaSiteKey] 
+			. $request->GetPath() 
+			. $request->GetQuery(TRUE);
+		$this->redirect($targetUrl, \MvcCore\Interfaces\IResponse::SEE_OTHER);
 	}
 
 	/**
@@ -274,7 +280,7 @@ class Media extends \MvcCore\Router {
 	 */
 	protected function manageDetectionAndStoreInSession() {
 		$detect = new \Mobile_Detect();
-		$mediaSiteKeys = array_keys($this->AllowedSiteKeysAndUrlPrefixes);
+		$mediaSiteKeys = array_keys($this->allowedSiteKeysAndUrlPrefixes);
 		if ($detect->isMobile()) {
 			$this->mediaSiteKey = $mediaSiteKeys[0];
 		} else if ($detect->isTablet()) {
@@ -292,16 +298,22 @@ class Media extends \MvcCore\Router {
 	 * @return void
 	 */
 	protected function checkMediaSiteVersionWithRequestVersionAndRedirectIfDifferent() {
-		$sessionOrDetectionSameWithRequest = $this->mediaSiteKey === $this->request->MediaSiteKey;
+		$request = & $this->request;
+		$requestMediaSiteKey = $request->GetMediaSiteKey();
+		$sessionOrDetectionSameWithRequest = $this->mediaSiteKey === $requestMediaSiteKey;
 		if (!$sessionOrDetectionSameWithRequest) {
 			if ($this->stricModeBySession) {
-				$targetUrl = $this->request->Protocol . '//' . $this->request->Host . $this->request->BasePath
-					. $this->AllowedSiteKeysAndUrlPrefixes[$this->mediaSiteKey] . $this->request->Path;
-				$targetUrl .= $this->request->Query ? '?' . $this->request->Query : '';
-				if ($this->isGet) \MvcCore\Controller::Redirect($targetUrl);
+				if ($this->isGet) 
+					$this->redirect(
+						$request->GetBaseUrl()
+						. $this->allowedSiteKeysAndUrlPrefixes[$this->mediaSiteKey] 
+						. $request->GetPath()
+						. $request->GetQuery(TRUE), 
+						\MvcCore\Interfaces\IResponse::SEE_OTHER
+					);
 			} else {
-				$this->session->{static::MEDIA_SITE_KEY_URL_PARAM} = $this->request->MediaSiteKey;
-				$this->mediaSiteKey = $this->request->MediaSiteKey;
+				$this->session->{static::MEDIA_SITE_KEY_URL_PARAM} = $requestMediaSiteKey;
+				$this->mediaSiteKey = $requestMediaSiteKey;
 			}
 		}
 	}
@@ -312,9 +324,10 @@ class Media extends \MvcCore\Router {
 	 * @return void
 	 */
 	protected function setUpSession () {
-		if (is_null($this->session)) {
-			$this->session = \MvcCore\Session::GetNamespace(__CLASS__);
-			$this->session->SetExpirationSeconds($this->SessionExpirationSeconds);
+		if ($this->session === NULL) {
+			$sessionClass = static::$application->GetSessionClass();
+			$this->session = $sessionClass::GetNamespace(__CLASS__);
+			$this->session->SetExpirationSeconds($this->sessionExpirationSeconds);
 		}
 	}
 
@@ -324,10 +337,12 @@ class Media extends \MvcCore\Router {
 	 * @return void
 	 */
 	protected function setUpRequestMediaSiteKeyFromUrl () {
-		foreach ($this->AllowedSiteKeysAndUrlPrefixes as $mediaSiteKey => $requestPathPrefix) {
-			if (mb_strpos($this->request->Path, $requestPathPrefix . '/') === 0) {
-				$this->request->MediaSiteKey = $mediaSiteKey;
-				$this->request->Path = mb_substr($this->request->Path, strlen($requestPathPrefix));
+		$requestPath = $this->request->GetPath();
+		foreach ($this->allowedSiteKeysAndUrlPrefixes as $mediaSiteKey => $requestPathPrefix) {
+			if (mb_strpos($requestPath, $requestPathPrefix . '/') === 0) {
+				$this->request
+					->SetMediaSiteKey($mediaSiteKey)
+					->SetPath(mb_substr($requestPath, strlen($requestPathPrefix)));
 				break;
 			}
 		}

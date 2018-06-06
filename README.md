@@ -13,13 +13,13 @@ composer require mvccore/ext-router-media
 ```
 
 ## Features
-- recognizes user device by useragent with `Mobile_Detect` library into full/tablet/mobile
-- stores recognized device version into session namespace for hout by default, possible to change
-- completes public property `\MvcCore\Request::$MediaSiteVersion to use it in your app
-- removes possibly founded media prefix flag from `\MvcCore\Request::$Path` property to 
-  process routing as usual
-- completes every get application url with media prefix flag, possible to change
-- strict mode media site version configuration by:
+- Recognizes user device by user agent with `\Mobile_Detect` library into full/tablet/mobile.
+- Stores recognized device version in it's own session namespace with configurable expiration.
+- Completes `$request->GetMediaSiteVersion()` to use it in your app.
+- Removes possibly founded media prefix substring from `$request->GetPath()` to 
+  process routing as usuall without any special url variants to annoying you in your projects and routing.
+- Completes every get application url with media prefix substring (possible to configure).
+- Strict mode media site version configuration option.
 
 ## Usage
 Add this to `Bootstrap.php` or to **very application beginning**, 
@@ -40,10 +40,6 @@ You can change it by:
 ```php
 \MvcCore\Ext\Routers\Media::GetInstance()->SetSessionExpirationSeconds(86400); // day
 ```
-But it's not practicly necessary, because if there is necessary to detect
-user device again, it's not so often when the detection process is only 
-once per hour - it costs realy nothing per hour. And only a few users stay
-on your site more than one hour.
 
 ### Media url prefixes and allowed media versions
 To allow only some media site versions and configure url prefixes, you can use:
@@ -51,8 +47,8 @@ To allow only some media site versions and configure url prefixes, you can use:
 // to allow only mobile version (with url prefix '/mobile') 
 // and full version (with no url prefix):
 \MvcCore\Ext\Routers\Media::GetInstance()->SetAllowedSiteKeysAndUrlPrefixes(array(
-	\MvcCore\Ext\Routers\MediaSiteKey::MOBILE	=> '/mobile',
-	\MvcCore\Ext\Routers\MediaSiteKey::FULL		=> '',
+	\MvcCore\Ext\Routers\Media::MEDIA_VERSION_MOBILE	=> '/mobile',
+	\MvcCore\Ext\Routers\Media::MEDIA_VERSION_FULL		=> '',			// empty string as last item!
 ));
 ```
 
@@ -64,11 +60,11 @@ application with different media prefix in path like:
 /mobile/any/application/request/path
 ```
 but ony where is possible to change media site version by 
-special $_GET param "media_site_key" like:
+special `$_GET` param "switch_media_version" like:
 ```
-/mobile/any/application/request/path?media_site_key=mobile
+/mobile/any/application/request/path?switch_media_version=mobile
 ```
 you need to configure router into strict session mode by:
 ```php
-\MvcCore\Ext\Routers\Media::GetInstance()->SetStricModeBySession();
+\MvcCore\Ext\Routers\Media::GetInstance()->SetStricModeBySession(TRUE);
 ```

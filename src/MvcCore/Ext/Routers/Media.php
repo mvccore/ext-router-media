@@ -13,6 +13,11 @@
 
 namespace MvcCore\Ext\Routers;
 
+/**
+ * Responsibility - recognize media site version from url or user agent or session and set 
+ *					up request object, complete automaticly rewrited url with remembered 
+ *					media site version. Redirect to proper media site version by configuration.
+ */
 class Media extends \MvcCore\Router implements \MvcCore\Ext\Routers\IMedia
 {
 	/*************************************************************************************
@@ -30,7 +35,7 @@ class Media extends \MvcCore\Router implements \MvcCore\Ext\Routers\IMedia
 	 * media site version is stored in expiration is enlarged by this value and user is 
 	 * redirected to different place. But if router is configured into session strict mode, 
 	 * than to redirect user into new media site version, there is necesary to add special 
-	 * url switch param: `&media_site_key=mobile` (always automaticly added by `Url()` 
+	 * url switch param: `&media_site_version=mobile` (always automaticly added by `Url()` 
 	 * method). Because without it, user is redirected strictly back into the same media 
 	 * version.
 	 * @var int
@@ -124,9 +129,12 @@ class Media extends \MvcCore\Router implements \MvcCore\Ext\Routers\IMedia
 	 * Optionaly set routes as first argument.
 	 * This method automaticly patch `\MvcCore\Application` with it's class name for router:
 	 * `\MvcCore\Application::GetInstance()->SetRouterClass(get_called_class());`.
+	 * @param \MvcCore\Route[]|\MvcCore\Interfaces\IRoute[]|array $routes Keyed array with routes,
+	 *																	  keys are route names or route
+	 *																	  `Controller::Action` definitions.
 	 * @return \MvcCore\Ext\Routers\Media|\MvcCore\Ext\Routers\IMedia
 	 */
-	public static function & GetInstance ($routes = []) {
+	public static function & GetInstance (array $routes = []) {
 		static::$application = \MvcCore\Application::GetInstance();
 		static::$application->SetRouterClass(get_called_class()); // patch current router class in core
 		$router = parent::GetInstance($routes);
@@ -173,7 +181,7 @@ class Media extends \MvcCore\Router implements \MvcCore\Ext\Routers\IMedia
 	 * ]);
 	 * ```
 	 * @param array $allowedSiteKeysAndUrlPrefixes
-	 * @return \MvcCore\Ext\Routers\Media
+	 * @return \MvcCore\Ext\Routers\Media|\MvcCore\Ext\Routers\IMedia
 	 */
 	public function & SetAllowedSiteKeysAndUrlPrefixes ($allowedSiteKeysAndUrlPrefixes = []) {
 		$this->allowedSiteKeysAndUrlPrefixes = $allowedSiteKeysAndUrlPrefixes;
@@ -191,7 +199,7 @@ class Media extends \MvcCore\Router implements \MvcCore\Ext\Routers\IMedia
 	 * second argument `$params` key with different media site version:
 	 * `$this->Url('self', ['media_version' => 'mobile']);`.
 	 * @param bool $stricModeBySession
-	 * @return \MvcCore\Ext\Routers\Media
+	 * @return \MvcCore\Ext\Routers\Media|\MvcCore\Ext\Routers\IMedia
 	 */
 	public function SetStricModeBySession ($stricModeBySession = TRUE) {
 		$this->stricModeBySession = $stricModeBySession;
@@ -215,7 +223,7 @@ class Media extends \MvcCore\Router implements \MvcCore\Ext\Routers\IMedia
 	 *		);`
 	 *	Output:
 	 *		`/application/base-bath/m/products-list/cool-product-name/blue?variant[]=L&amp;variant[]=XL"`
-	 * @param \MvcCore\Route &$route
+	 * @param \MvcCore\Route|\MvcCore\Interfaces\IRoute &$route
 	 * @param array $params
 	 * @throws \InvalidArgumentException
 	 * @return string
@@ -264,18 +272,26 @@ class Media extends \MvcCore\Router implements \MvcCore\Ext\Routers\IMedia
 	 ************************************************************************************/
 
 	/**
-	 * Process media site version before request is routed by \MvcCore\Router
+	 * Process media site version before request is routed by `\MvcCore\Router`.
 	 * Prepare:
-	 * - media version from request
-	 * - media version from session (setted by any previous request)
-	 * - detect if there is any special media site switching parameter in $_GET (static::SWITCH_MEDIA_VERSION_URL_PARAM)
-	 * For each GET request - do:
-	 * - if there is special media site switching param in request $_GET and it's allowed
-	 *	 - switch media site version in session by it and redirect to the same url with new media site version substring in url
-	 * - if there is no media site version in session or if media site version from sesson is not allowed
-	 *   - recognize media site version by Mobile_Detect third party library and store recognized version in this context and in session
-	 * - else set up media site version from session
-	 * - later if detected media site version is not the same as requested media site version - redirect to detected version
+	 * - Media site version from requested url.
+	 * - Media site version from session initialized by any previous request.
+	 * - Detect if there is any special media site switching parameter in 
+	 *   request object global array `$_GET` with name by 
+	 *   `static::SWITCH_MEDIA_VERSION_URL_PARAM`.
+	 * Than process for every request::
+	 * - If there is special media site switching param in request object global
+	 *   array `$_GET` and it's value is allowed as media site version:
+	 *	 - Switch media site version in session by given switching param value 
+	 *     and redirect to the same page with new media site version substring 
+	 *     in url or with new media site version query string param.
+	 * - If there is no media site version in session or if media site version 
+	 *   from sesson is not allowed:
+	 *   - Recognize media site version by `\Mobile_Detect` third party library 
+	 *     and store recognized version in this context and in session namespace.
+	 * - Else set up media site version from session into this context
+	 * - Later - if detected media site version is not the same as requested 
+	 *   media site version - redirect to detected version in this context.
 	 * @param \MvcCore\Request|\MvcCore\Interfaces\IRequest &$request
 	 * @return bool
 	 */
@@ -284,22 +300,28 @@ class Media extends \MvcCore\Router implements \MvcCore\Ext\Routers\IMedia
 		/** @var $request \MvcCore\Request */
 		$this->request = & $request;
 		$request->SetOriginalPath($request->GetPath());
+		
 		// switching media site version will be only by get:
 		$this->isGet = $request->GetMethod() == \MvcCore\Interfaces\IRequest::METHOD_GET;
+		
 		// look into request params if are we just switching any new site media version
 		$this->requestGlobalGet = array_merge([], $request->GetGlobalCollection('get')); // clone `$_GET`
+		
 		//if ($this->stricModeBySession) { // check it with any strict session configuration to have more flexible navigations
 			$sessStrictModeSwitchUrlParam = static::SWITCH_MEDIA_VERSION_URL_PARAM;
 			if (isset($this->requestGlobalGet[$sessStrictModeSwitchUrlParam])) {
 				$this->mediaSiteVersionSwitchUriParam = strtolower($this->requestGlobalGet[$sessStrictModeSwitchUrlParam]);
 			}
 		//}
+		
 		// set up current media site version from url string
 		$this->setUpRequestMediaSiteVersionFromUrl();
+		
 		// Set up session object to look inside for something from previous requests. 
 		// This command starts the session if not started yet.
-		static::setUpSession();
-		// look into session object if there are or not any record about recognized device from previous request
+		$this->setUpSession();
+		
+		// look into session object if there are or not any record about recognized device from previous request:
 		$mediaVersionUrlParam = static::MEDIA_VERSION_URL_PARAM;
 		if (isset($this->session->{$mediaVersionUrlParam})) {
 			$this->sessionMediaSiteVersion = $this->session->{$mediaVersionUrlParam};
@@ -310,6 +332,9 @@ class Media extends \MvcCore\Router implements \MvcCore\Ext\Routers\IMedia
 			$this->mediaSiteVersionSwitchUriParam !== NULL &&
 			isset($this->allowedSiteKeysAndUrlPrefixes[$this->mediaSiteVersionSwitchUriParam])
 		) {
+			// if there is detected in requested url media site version switching param,
+			// store switching param value in session, remove param from `$_GET` 
+			// and redirect to the same page with new media site version:
 			$result = $this->manageSwitchingAndRedirect();
 
 		} else if (
@@ -318,22 +343,29 @@ class Media extends \MvcCore\Router implements \MvcCore\Ext\Routers\IMedia
 				!isset($this->allowedSiteKeysAndUrlPrefixes[$this->sessionMediaSiteVersion])
 			)
 		) {
+			// if there is no session record about media site version:
 			$this->manageDetectionAndStoreInSession();
+			// check if media site version is the same as local media site version:
 			$result = $this->checkMediaSiteVersionWithRequestVersionAndRedirectIfDifferent();
 
 		} else {
+			// if there is media site version in session already:
 			$this->mediaSiteVersion = $this->sessionMediaSiteVersion;
+			// check if media site version is the same as local media site version:
 			$result = $this->checkMediaSiteVersionWithRequestVersionAndRedirectIfDifferent();
 		}
 
+		// set up stored/detected media site version into request:
 		$request->SetMediaSiteVersion($this->mediaSiteVersion);
+		
+		// return `TRUE` or `FALSE` to break or not preroute handlers queue dispatching:
 		return $result;
 	}
 
 	/**
-	 * Store new media site version from url into session,
-	 * remove it from $_GET, redirect to the same url as reqest without
-	 * switch media site version param and exit inside redirect function
+	 * Store new media site version from url in session namespace, remove 
+	 * media site version switching param from request object global collection 
+	 * `$_GET` and redirect to the same page without switching param.
 	 * @return bool
 	 */
 	protected function manageSwitchingAndRedirect () {
@@ -370,8 +402,9 @@ class Media extends \MvcCore\Router implements \MvcCore\Ext\Routers\IMedia
 	}
 
 	/**
-	 * Detect media site version by sended user agent string (Mobile_Detect library)
-	 * and store detected result in session for next requests
+	 * Detect media site version by sended user agent string by 
+	 * third party `\Mobile_Detect` library and store detected result 
+	 * in session namespace for next requests.
 	 * @return void
 	 */
 	protected function manageDetectionAndStoreInSession() {
@@ -389,9 +422,12 @@ class Media extends \MvcCore\Router implements \MvcCore\Ext\Routers\IMedia
 	}
 
 	/**
-	 * If local media site version (completed previously from session or Mobile_Detect library)
-	 * is different then media site version from request - redirect to url with media site version
-	 * from local $this context and exit (inside redirect function)
+	 * If local media site version is the same as requested - do not process 
+	 * any redirections. If local media site version is different version than 
+	 * version in requested url (local media site version is completed previously 
+	 * from session or by `\Mobile_Detect` library), then  - if strict mode by 
+	 * session is configured as `TRUE` - redirect to local media site version. 
+	 * If it's configured as `FALSE`, redirect to requested media site version.
 	 * @return bool
 	 */
 	protected function checkMediaSiteVersionWithRequestVersionAndRedirectIfDifferent() {
@@ -399,6 +435,8 @@ class Media extends \MvcCore\Router implements \MvcCore\Ext\Routers\IMedia
 		$requestMediaSiteVersion = $request->GetMediaSiteVersion();
 		$sessionOrDetectionSameWithRequest = $this->mediaSiteVersion === $requestMediaSiteVersion;
 		if (!$sessionOrDetectionSameWithRequest) {
+			// if requested media site version is not the same as version in session 
+			// fix it by `$this->stricModeBySession` configuration:
 			$mediaVersionUrlParam = static::MEDIA_VERSION_URL_PARAM;
 			if ($this->stricModeBySession && $this->isGet) {
 				// redirect back to `$this->mediaSiteVersion` by session
@@ -407,8 +445,10 @@ class Media extends \MvcCore\Router implements \MvcCore\Ext\Routers\IMedia
 				// redirect to requested version by `$requestMediaSiteVersion`:
 				$targetMediaSiteVersion = $requestMediaSiteVersion;
 			}
+			// store the right media site version in session
 			$this->session->{$mediaVersionUrlParam} = $targetMediaSiteVersion;
 			$this->mediaSiteVersion = $targetMediaSiteVersion;
+			// complete new url to redirect into
 			if ($this->anyRoutesConfigured) {
 				$targetUrl = $request->GetBaseUrl()
 					. $this->allowedSiteKeysAndUrlPrefixes[$targetMediaSiteVersion] 
@@ -429,6 +469,7 @@ class Media extends \MvcCore\Router implements \MvcCore\Ext\Routers\IMedia
 					$targetUrl .= '?' . http_build_query($this->requestGlobalGet, '', $amp);
 				}
 			}
+			// redirect
 			$this->redirect(
 				$targetUrl, 
 				\MvcCore\Interfaces\IResponse::SEE_OTHER
@@ -438,6 +479,13 @@ class Media extends \MvcCore\Router implements \MvcCore\Ext\Routers\IMedia
 		return TRUE;
 	}
 
+	/**
+	 * If local request object global collection `$_GET` contains any items
+	 * and if controller and action in collection have the same values as 
+	 * default controller and action values, unset them from request global 
+	 * `$_GET` collection.
+	 * @return void
+	 */
 	protected function removeDefaultControllerAndActionFromGlobalGet () {
 		if ($this->requestGlobalGet) {
 			$app = \MvcCore\Application::GetInstance();
@@ -453,7 +501,8 @@ class Media extends \MvcCore\Router implements \MvcCore\Ext\Routers\IMedia
 
 	/**
 	 * If session namespace by this class is not initialized,
-	 * init namespace and move expiration to next hour
+	 * initialize session namespace under this class name and 
+	 * move expiration to configured value.
 	 * @return void
 	 */
 	protected function setUpSession () {
@@ -465,8 +514,11 @@ class Media extends \MvcCore\Router implements \MvcCore\Ext\Routers\IMedia
 	}
 
 	/**
-	 * Try to set up into \MvcCore\Request object a MediaSiteVersion property by requested url
-	 * by defined url prefixes founded in requested url.
+	 * Try to set up into `\MvcCore\Request` object new 
+	 * media site version detected from requested url by url path prefix
+	 * or by url query string param. If there is catched any valid media site 
+	 * version - set this value into request object. If there is nothing catched,
+	 * set into request object full media site version anyway.
 	 * @return void
 	 */
 	protected function setUpRequestMediaSiteVersionFromUrl () {

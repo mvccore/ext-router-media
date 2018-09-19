@@ -30,9 +30,9 @@ trait PropsGettersSetters
 	 * @var array
 	 */
 	protected $allowedSiteKeysAndUrlPrefixes = [
-		IMedia::MEDIA_VERSION_MOBILE	=> '/m',
-		IMedia::MEDIA_VERSION_TABLET	=> '/t',
-		IMedia::MEDIA_VERSION_FULL		=> '',
+		Routers\IMedia::MEDIA_VERSION_MOBILE	=> '/m',
+		Routers\IMedia::MEDIA_VERSION_TABLET	=> '/t',
+		Routers\IMedia::MEDIA_VERSION_FULL		=> '',
 	];
 
 

@@ -28,25 +28,10 @@ implements	\MvcCore\Ext\Routers\IMedia,
 	use \MvcCore\Ext\Routers\Media\Routing;
 	use \MvcCore\Ext\Routers\Media\UrlCompletion;
 	
-	/**
-	 * Get singleton instance of `\MvcCore\Ext\Routers\Media` stored always 
-	 * in parent class `MvcCore\Router::$instance` static property.
-	 * Optionaly set routes as first argument.
-	 * This method automaticly patch `\MvcCore\Application` with it's class name for router:
-	 * `\MvcCore\Application::GetInstance()->SetRouterClass(get_called_class());`.
-	 * @param \MvcCore\Route[]|\MvcCore\Interfaces\IRoute[]|array $routes Keyed array with routes,
-	 *																	  keys are route names or route
-	 *																	  `Controller::Action` definitions.
-	 * @return \MvcCore\Ext\Routers\Media|\MvcCore\Ext\Routers\IMedia
-	 */
-	public static function & GetInstance (array $routes = []) {
-		static::$application = \MvcCore\Application::GetInstance();
-		static::$application->SetRouterClass(get_called_class()); // patch current router class in core
-		$router = parent::GetInstance($routes);
-		static::$application
-			->AddPreRouteHandler(function (\MvcCore\Interfaces\IRequest & $request) use (& $router) {
-				return $router->preRouteHandlerMedia($request);
-			});
-		return $router;
+	public function & Route () {
+		$result = FALSE;
+		if ($this->routeMedia() === FALSE) return $result;
+		$result = parent::Route();
+		return $result;
 	}
 }

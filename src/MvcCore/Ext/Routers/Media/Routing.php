@@ -36,13 +36,12 @@ trait Routing
 	 * - Else set up media site version from session into this context
 	 * - Later - if detected media site version is not the same as requested 
 	 *   media site version - redirect to detected version in this context.
-	 * @param \MvcCore\Request|\MvcCore\Interfaces\IRequest &$request
 	 * @return bool
 	 */
-	protected function preRouteHandlerMedia (\MvcCore\Interfaces\IRequest & $request) {
+	protected function routeMedia () {
 		$result = TRUE;
-		/** @var $request \MvcCore\Request */
-		$this->request = & $request;
+		
+		$request = & $this->request;
 		$request->SetOriginalPath($request->GetPath());
 		
 		// switching media site version will be only by get:
@@ -102,7 +101,7 @@ trait Routing
 		// set up stored/detected media site version into request:
 		$request->SetMediaSiteVersion($this->mediaSiteVersion);
 		
-		// return `TRUE` or `FALSE` to break or not preroute handlers queue dispatching:
+		// return `TRUE` or `FALSE` to break or not the routing process
 		return $result;
 	}
 
@@ -232,21 +231,22 @@ trait Routing
 	 * @return void
 	 */
 	protected function setUpRequestMediaVersionFromUrl () {
-		if ($this->routes) {
+		$routesDefined = count($this->routes) > 0;
+		$mediaSiteVersionCatchedInPath = FALSE;
+		if ($routesDefined) {
 			$requestPath = $this->request->GetPath(TRUE);
-			$mediaSiteVersionCatchedInPath = FALSE;
 			foreach ($this->allowedSiteKeysAndUrlPrefixes as $mediaSiteVersion => $requestPathPrefix) {
 				if (mb_strpos($requestPath, $requestPathPrefix . '/') === 0) {
-					$mediaSiteVersionCatchedInPath = TRUE;
+					if (mb_strlen($requestPathPrefix) > 0)
+						$mediaSiteVersionCatchedInPath = TRUE;
 					$this->request
 						->SetMediaSiteVersion($mediaSiteVersion)
 						->SetPath(mb_substr($requestPath, strlen($requestPathPrefix)));
 					break;
 				}
 			}
-			if (!$mediaSiteVersionCatchedInPath) 
-				$this->request->SetMediaSiteVersion(static::MEDIA_VERSION_FULL);
-		} else {
+		}
+		if (!$routesDefined || !$mediaSiteVersionCatchedInPath) {
 			$requestMediaVersion = $this->request->GetParam(self::MEDIA_VERSION_URL_PARAM, 'a-zA-Z');
 			if ($requestMediaVersion) $requestMediaVersion = strtolower($requestMediaVersion);
 			if (isset($this->allowedSiteKeysAndUrlPrefixes[$requestMediaVersion])) {

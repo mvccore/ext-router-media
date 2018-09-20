@@ -30,7 +30,7 @@ implements	\MvcCore\Ext\Routers\IMedia,
 	
 	public function & Route () {
 		$result = FALSE;
-		if ($this->routeMedia() === FALSE) return $result;
+		if ($this->preRouteMedia() === FALSE) return $result;
 		$result = parent::Route();
 		return $result;
 	}

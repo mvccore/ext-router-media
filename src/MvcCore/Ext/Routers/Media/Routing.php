@@ -13,17 +13,12 @@
 
 namespace MvcCore\Ext\Routers\Media;
 
+use MvcCore\Ext\Routers;
+
 trait Routing
 {
 	/**
 	 * Process media site version before request is routed by `\MvcCore\Router`.
-	 * Prepare:
-	 * - Media site version from requested url.
-	 * - Media site version from session initialized by any previous request.
-	 * - Detect if there is any special media site switching parameter in 
-	 *   request object global array `$_GET` with name by 
-	 *   `static::SWITCH_MEDIA_VERSION_URL_PARAM`.
-	 * Than process for every request::
 	 * - If there is special media site switching param in request object global
 	 *   array `$_GET` and it's value is allowed as media site version:
 	 *	 - Switch media site version in session by given switching param value 
@@ -38,42 +33,14 @@ trait Routing
 	 *   media site version - redirect to detected version in this context.
 	 * @return bool
 	 */
-	protected function routeMedia () {
+	protected function preRouteMedia () {
 		$result = TRUE;
-		
-		$request = & $this->request;
-		$request->SetOriginalPath($request->GetPath());
-		
-		// switching media site version will be only by get:
-		$this->isGet = $request->GetMethod() == \MvcCore\Interfaces\IRequest::METHOD_GET;
-		
-		// look into request params if are we just switching any new site media version
-		$this->requestGlobalGet = array_merge([], $request->GetGlobalCollection('get')); // clone `$_GET`
-		
-		//if ($this->stricModeBySession) { // check it with any strict session configuration to have more flexible navigations
-			$sessStrictModeSwitchUrlParam = static::SWITCH_MEDIA_VERSION_URL_PARAM;
-			if (isset($this->requestGlobalGet[$sessStrictModeSwitchUrlParam])) {
-				$this->mediaSiteVersionSwitchUriParam = strtolower($this->requestGlobalGet[$sessStrictModeSwitchUrlParam]);
-			}
-		//}
-		
-		// set up current media site version from url string
-		$this->setUpRequestMediaVersionFromUrl();
-		
-		// Set up session object to look inside for something from previous requests. 
-		// This command starts the session if not started yet.
-		$this->setUpSession();
-		
-		// look into session object if there are or not any record about recognized device from previous request:
-		$mediaVersionUrlParam = static::MEDIA_VERSION_URL_PARAM;
-		if (isset($this->session->{$mediaVersionUrlParam})) {
-			$this->sessionMediaSiteVersion = $this->session->{$mediaVersionUrlParam};
-		}
+		$this->preRoutePrepare();
+		$this->preRoutePrepareMedia();
 		
 		if (
-			$this->isGet &&
-			$this->mediaSiteVersionSwitchUriParam !== NULL &&
-			isset($this->allowedSiteKeysAndUrlPrefixes[$this->mediaSiteVersionSwitchUriParam])
+			(($this->isGet && $this->routeGetRequestsOnly) || !$this->routeGetRequestsOnly) &&
+			$this->switchUriParamMediaSiteVersion !== NULL
 		) {
 			// if there is detected in requested url media site version switching param,
 			// store switching param value in session, remove param from `$_GET` 
@@ -81,10 +48,8 @@ trait Routing
 			$result = $this->manageMediaSwitchingAndRedirect();
 
 		} else if (
-			$this->isGet && (
-				$this->sessionMediaSiteVersion === NULL ||
-				!isset($this->allowedSiteKeysAndUrlPrefixes[$this->sessionMediaSiteVersion])
-			)
+			(($this->isGet && $this->routeGetRequestsOnly) || !$this->routeGetRequestsOnly) && 
+			$this->sessionMediaSiteVersion === NULL
 		) {
 			// if there is no session record about media site version:
 			$this->manageMediaDetectionAndStoreInSession();
@@ -99,10 +64,41 @@ trait Routing
 		}
 
 		// set up stored/detected media site version into request:
-		$request->SetMediaSiteVersion($this->mediaSiteVersion);
+		$this->request->SetMediaSiteVersion($this->mediaSiteVersion);
 		
 		// return `TRUE` or `FALSE` to break or not the routing process
 		return $result;
+	}
+
+	/**
+	 * Prepare media site version processing before request is routed by `\MvcCore\Router`:
+	 * - prepare media site version from requested url
+	 * - prepare media site version from session initialized by any previous request
+	 * - detect if there is any special media site switching parameter in 
+	 *   request object global array `$_GET` with name by 
+	 *   `static::SWITCH_MEDIA_VERSION_URL_PARAM`
+	 * @return void
+	 */
+	protected function preRoutePrepareMedia () {
+		//if ($this->stricModeBySession) { // check it with any strict session configuration to have more flexible navigations
+			$sessStrictModeSwitchUrlParam = static::SWITCH_MEDIA_VERSION_URL_PARAM;
+			if (isset($this->requestGlobalGet[$sessStrictModeSwitchUrlParam])) {
+				$switchUriParamMediaSiteVersion = strtolower($this->requestGlobalGet[$sessStrictModeSwitchUrlParam]);
+				if (isset($this->allowedSiteKeysAndUrlPrefixes[$switchUriParamMediaSiteVersion]))
+					$this->switchUriParamMediaSiteVersion = $switchUriParamMediaSiteVersion;
+			}
+		//}
+		
+		// set up current media site version from url string
+		$this->setUpRequestMediaVersionFromUrl();
+		
+		// look into session object if there are or not any record about recognized device from previous request:
+		$mediaVersionUrlParam = static::MEDIA_VERSION_URL_PARAM;
+		if (isset($this->session->{$mediaVersionUrlParam})) {
+			$sessionMediaSiteVersion = $this->session->{$mediaVersionUrlParam};
+			if (isset($this->allowedSiteKeysAndUrlPrefixes[$sessionMediaSiteVersion]))
+				$this->sessionMediaSiteVersion = $this->session->{$mediaVersionUrlParam};
+		}
 	}
 
 	/**
@@ -112,7 +108,7 @@ trait Routing
 	 * @return bool
 	 */
 	protected function manageMediaSwitchingAndRedirect () {
-		$mediaSiteVersion = $this->mediaSiteVersionSwitchUriParam;
+		$mediaSiteVersion = $this->switchUriParamMediaSiteVersion;
 		// store switched site key into session
 		$mediaVersionUrlParam = static::MEDIA_VERSION_URL_PARAM;
 		$this->session->{$mediaVersionUrlParam} = $mediaSiteVersion;
@@ -152,13 +148,18 @@ trait Routing
 	 */
 	protected function manageMediaDetectionAndStoreInSession() {
 		$detect = new \Mobile_Detect();
-		$mediaSiteVersions = array_keys($this->allowedSiteKeysAndUrlPrefixes);
-		if ($detect->isMobile()) {
-			$this->mediaSiteVersion = $mediaSiteVersions[0];
-		} else if ($detect->isTablet()) {
-			$this->mediaSiteVersion = $mediaSiteVersions[1];
+		if (
+			array_key_exists(Routers\IMedia::MEDIA_VERSION_MOBILE, $this->allowedSiteKeysAndUrlPrefixes) && 
+			$detect->isMobile()
+		) {
+			$this->mediaSiteVersion = Routers\IMedia::MEDIA_VERSION_MOBILE;
+		} else if (
+			array_key_exists(Routers\IMedia::MEDIA_VERSION_TABLET, $this->allowedSiteKeysAndUrlPrefixes) && 
+			$detect->isTablet()
+		) {
+			$this->mediaSiteVersion = Routers\IMedia::MEDIA_VERSION_TABLET;
 		} else {
-			$this->mediaSiteVersion = $mediaSiteVersions[2];
+			$this->mediaSiteVersion = Routers\IMedia::MEDIA_VERSION_FULL;
 		}
 		$mediaVersionUrlParam = static::MEDIA_VERSION_URL_PARAM;
 		$this->session->{$mediaVersionUrlParam} = $this->mediaSiteVersion;
@@ -181,7 +182,10 @@ trait Routing
 			// if requested media site version is not the same as version in session 
 			// fix it by `$this->stricModeBySession` configuration:
 			$mediaVersionUrlParam = static::MEDIA_VERSION_URL_PARAM;
-			if ($this->stricModeBySession && $this->isGet) {
+			if (
+				$this->stricModeBySession && 
+				(($this->isGet && $this->routeGetRequestsOnly) || !$this->routeGetRequestsOnly)
+			) {
 				// redirect back to `$this->mediaSiteVersion` by session
 				$targetMediaSiteVersion = $this->mediaSiteVersion;
 			} else {
@@ -247,9 +251,11 @@ trait Routing
 			}
 		}
 		if (!$routesDefined || !$mediaSiteVersionCatchedInPath) {
-			$requestMediaVersion = $this->request->GetParam(self::MEDIA_VERSION_URL_PARAM, 'a-zA-Z');
-			if ($requestMediaVersion) $requestMediaVersion = strtolower($requestMediaVersion);
-			if (isset($this->allowedSiteKeysAndUrlPrefixes[$requestMediaVersion])) {
+			$requestMediaVersion = $this->request->GetParam(static::MEDIA_VERSION_URL_PARAM, 'a-zA-Z');
+			$requestMediaVersionValidStr = $requestMediaVersion && strlen($requestMediaVersion) > 0;
+			if ($requestMediaVersionValidStr) 
+				$requestMediaVersion = strtolower($requestMediaVersion);
+			if ($requestMediaVersionValidStr && isset($this->allowedSiteKeysAndUrlPrefixes[$requestMediaVersion])) {
 				$mediaSiteVersion = $requestMediaVersion;
 			} else {
 				$mediaSiteVersion = static::MEDIA_VERSION_FULL;

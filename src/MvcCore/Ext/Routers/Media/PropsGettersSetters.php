@@ -47,7 +47,7 @@ trait PropsGettersSetters
 	 * has string with this value.
 	 * @var string|NULL
 	 */
-	protected $mediaSiteVersionSwitchUriParam = NULL;
+	protected $switchUriParamMediaSiteVersion = NULL;
 
 	/**
 	 * Finally resolved media site version, used in `\MvcCore\Request` 

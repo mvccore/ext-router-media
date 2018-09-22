@@ -119,7 +119,7 @@ trait Routing
 		if ($this->anyRoutesConfigured) {
 			$targetUrl = $request->GetBaseUrl()
 				. $this->allowedSiteKeysAndUrlPrefixes[$mediaSiteVersion] 
-				. $request->GetPath();
+				. $request->GetPath(TRUE);
 		} else {
 			$targetUrl = $request->GetBaseUrl();
 			if ($mediaSiteVersion === static::MEDIA_VERSION_FULL) {
@@ -199,7 +199,7 @@ trait Routing
 			if ($this->anyRoutesConfigured) {
 				$targetUrl = $request->GetBaseUrl()
 					. $this->allowedSiteKeysAndUrlPrefixes[$targetMediaSiteVersion] 
-					. $request->GetPath()
+					. $request->GetPath(TRUE)
 					. $request->GetQuery(TRUE);
 			} else {
 				$targetUrl = $request->GetBaseUrl();

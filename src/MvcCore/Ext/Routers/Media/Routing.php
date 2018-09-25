@@ -31,6 +31,7 @@ trait Routing
 	 * - Else set up media site version from session into this context
 	 * - Later - if detected media site version is not the same as requested 
 	 *   media site version - redirect to detected version in this context.
+	 * Return always `TRUE` and return `FALSE` if request is redirected.
 	 * @return bool
 	 */
 	protected function preRouteMedia () {
@@ -54,17 +55,18 @@ trait Routing
 			// if there is no session record about media site version:
 			$this->manageMediaDetectionAndStoreInSession();
 			// check if media site version is the same as local media site version:
-			$result = $this->checkMediaVersionWithRequestVersionAndRedirectIfDifferent();
+			$result = $this->checkMediaVersionWithUrlAndRedirectIfNecessary();
 
 		} else {
 			// if there is media site version in session already:
 			$this->mediaSiteVersion = $this->sessionMediaSiteVersion;
 			// check if media site version is the same as local media site version:
-			$result = $this->checkMediaVersionWithRequestVersionAndRedirectIfDifferent();
+			$result = $this->checkMediaVersionWithUrlAndRedirectIfNecessary();
 		}
 
 		// set up stored/detected media site version into request:
-		$this->request->SetMediaSiteVersion($this->mediaSiteVersion);
+		if ($this->mediaSiteVersion)
+			$this->request->SetMediaSiteVersion($this->mediaSiteVersion);
 		
 		// return `TRUE` or `FALSE` to break or not the routing process
 		return $result;
@@ -89,15 +91,53 @@ trait Routing
 			}
 		//}
 		
-		// set up current media site version from url string
-		$this->setUpRequestMediaVersionFromUrl();
-		
 		// look into session object if there are or not any record about recognized device from previous request:
 		$mediaVersionUrlParam = static::MEDIA_VERSION_URL_PARAM;
 		if (isset($this->session->{$mediaVersionUrlParam})) {
 			$sessionMediaSiteVersion = $this->session->{$mediaVersionUrlParam};
 			if (isset($this->allowedSiteKeysAndUrlPrefixes[$sessionMediaSiteVersion]))
 				$this->sessionMediaSiteVersion = $this->session->{$mediaVersionUrlParam};
+		}
+		
+		// set up current media site version from url string
+		$this->setUpRequestMediaVersionFromUrl();
+	}
+
+	/**
+	 * Try to set up into `\MvcCore\Request` object new 
+	 * media site version detected from requested url by url path prefix
+	 * or by url query string param. If there is catched any valid media site 
+	 * version - set this value into request object. If there is nothing catched,
+	 * set into request object full media site version anyway.
+	 * @return void
+	 */
+	protected function setUpRequestMediaVersionFromUrl () {
+		$routesDefined = count($this->routes) > 0;
+		$mediaSiteVersionCatchedInPath = FALSE;
+		if ($routesDefined) {
+			$requestPath = $this->request->GetPath(TRUE);
+			foreach ($this->allowedSiteKeysAndUrlPrefixes as $mediaSiteVersion => $requestPathPrefix) {
+				if (mb_strpos($requestPath, $requestPathPrefix . '/') === 0) {
+					if (mb_strlen($requestPathPrefix) > 0)
+						$mediaSiteVersionCatchedInPath = TRUE;
+					$this->request
+						->SetMediaSiteVersion($mediaSiteVersion)
+						->SetPath(mb_substr($requestPath, strlen($requestPathPrefix)));
+					break;
+				}
+			}
+		}
+		if (!$routesDefined || !$mediaSiteVersionCatchedInPath) {
+			$requestMediaVersion = $this->request->GetParam(static::MEDIA_VERSION_URL_PARAM, 'a-zA-Z');
+			$requestMediaVersionValidStr = $requestMediaVersion && strlen($requestMediaVersion) > 0;
+			if ($requestMediaVersionValidStr) 
+				$requestMediaVersion = strtolower($requestMediaVersion);
+			if ($requestMediaVersionValidStr && isset($this->allowedSiteKeysAndUrlPrefixes[$requestMediaVersion])) {
+				$mediaSiteVersion = $requestMediaVersion;
+			} else {
+				$mediaSiteVersion = static::MEDIA_VERSION_FULL;
+			}
+			$this->request->SetMediaSiteVersion($mediaSiteVersion);
 		}
 	}
 
@@ -108,25 +148,29 @@ trait Routing
 	 * @return bool
 	 */
 	protected function manageMediaSwitchingAndRedirect () {
-		$mediaSiteVersion = $this->switchUriParamMediaSiteVersion;
-		// store switched site key into session
-		$mediaVersionUrlParam = static::MEDIA_VERSION_URL_PARAM;
-		$this->session->{$mediaVersionUrlParam} = $mediaSiteVersion;
-		$sessStrictModeSwitchUrlParam = static::SWITCH_MEDIA_VERSION_URL_PARAM;
-		unset($this->requestGlobalGet[$sessStrictModeSwitchUrlParam]);
+		// unset site key switch param
+		unset($this->requestGlobalGet[static::SWITCH_MEDIA_VERSION_URL_PARAM]);
+		// redirect to no switch param uri version
+		return $this->redirectToTargetMediaSiteVersion(
+			$this->setUpMediaSiteVersionToContextAndSession($this->switchUriParamMediaSiteVersion)
+		);
+	}
+
+	protected function redirectToTargetMediaSiteVersion ($targetMediaSiteVersion) {
 		// unset site key switch param and redirect to no switch param uri version
 		$request = & $this->request;
+		$mediaVersionUrlParam = static::MEDIA_VERSION_URL_PARAM;
 		if ($this->anyRoutesConfigured) {
 			$targetUrl = $request->GetBaseUrl()
-				. $this->allowedSiteKeysAndUrlPrefixes[$mediaSiteVersion] 
+				. $this->allowedSiteKeysAndUrlPrefixes[$targetMediaSiteVersion] 
 				. $request->GetPath(TRUE);
 		} else {
 			$targetUrl = $request->GetBaseUrl();
-			if ($mediaSiteVersion === static::MEDIA_VERSION_FULL) {
+			if ($targetMediaSiteVersion === static::MEDIA_VERSION_FULL) {
 				if (isset($this->requestGlobalGet[$mediaVersionUrlParam]))
 					unset($this->requestGlobalGet[$mediaVersionUrlParam]);
 			} else {
-				$this->requestGlobalGet[$mediaVersionUrlParam] = $mediaSiteVersion;
+				$this->requestGlobalGet[$mediaVersionUrlParam] = $targetMediaSiteVersion;
 			}
 			$this->removeDefaultCtrlActionFromGlobalGet();
 			if ($this->requestGlobalGet)
@@ -134,7 +178,7 @@ trait Routing
 		}
 		if ($this->requestGlobalGet) {
 			$amp = $this->getQueryStringParamsSepatator();
-			$targetUrl .= '?' . http_build_query($this->requestGlobalGet, '', $amp);
+			$targetUrl .= '?' . str_replace('%2F', '/', http_build_query($this->requestGlobalGet, '', $amp));
 		}
 		$this->redirect($targetUrl, \MvcCore\Interfaces\IResponse::SEE_OTHER);
 		return FALSE;
@@ -174,93 +218,36 @@ trait Routing
 	 * If it's configured as `FALSE`, redirect to requested media site version.
 	 * @return bool
 	 */
-	protected function checkMediaVersionWithRequestVersionAndRedirectIfDifferent() {
-		$request = & $this->request;
+	protected function checkMediaVersionWithUrlAndRedirectIfNecessary() {
 		$requestMediaSiteVersion = $request->GetMediaSiteVersion();
-		$sessionOrDetectionSameWithRequest = $this->mediaSiteVersion === $requestMediaSiteVersion;
-		if (!$sessionOrDetectionSameWithRequest) {
-			// if requested media site version is not the same as version in session 
-			// fix it by `$this->stricModeBySession` configuration:
-			$mediaVersionUrlParam = static::MEDIA_VERSION_URL_PARAM;
-			if (
-				$this->stricModeBySession && 
-				(($this->isGet && $this->routeGetRequestsOnly) || !$this->routeGetRequestsOnly)
-			) {
-				// redirect back to `$this->mediaSiteVersion` by session
-				$targetMediaSiteVersion = $this->mediaSiteVersion;
-			} else {
-				// redirect to requested version by `$requestMediaSiteVersion`:
-				$targetMediaSiteVersion = $requestMediaSiteVersion;
-			}
-			// store the right media site version in session
-			$this->session->{$mediaVersionUrlParam} = $targetMediaSiteVersion;
-			$this->mediaSiteVersion = $targetMediaSiteVersion;
-			// complete new url to redirect into
-			if ($this->anyRoutesConfigured) {
-				$targetUrl = $request->GetBaseUrl()
-					. $this->allowedSiteKeysAndUrlPrefixes[$targetMediaSiteVersion] 
-					. $request->GetPath(TRUE)
-					. $request->GetQuery(TRUE);
-			} else {
-				$targetUrl = $request->GetBaseUrl();
-				if ($targetMediaSiteVersion === static::MEDIA_VERSION_FULL) {
-					if (isset($this->requestGlobalGet[$mediaVersionUrlParam]))
-						unset($this->requestGlobalGet[$mediaVersionUrlParam]);
-				} else {
-					$this->requestGlobalGet[$mediaVersionUrlParam] = $targetMediaSiteVersion;
-				}
-				$this->removeDefaultCtrlActionFromGlobalGet();
-				if ($this->requestGlobalGet) {
-					$targetUrl .= $request->GetScriptName();
-					$amp = $this->getQueryStringParamsSepatator();
-					$targetUrl .= '?' . http_build_query($this->requestGlobalGet, '', $amp);
-				}
-			}
-			// redirect
-			$this->redirect(
-				$targetUrl, 
-				\MvcCore\Interfaces\IResponse::SEE_OTHER
-			);
-			return FALSE;
+		if ($this->mediaSiteVersion === $requestMediaSiteVersion) return TRUE;
+		// if requested media site version is not the same as version in session 
+		// fix it by `$this->stricModeBySession` configuration:
+		
+		if (
+			$this->stricModeBySession && 
+			(($this->isGet && $this->routeGetRequestsOnly) || !$this->routeGetRequestsOnly)
+		) {
+			// redirect back to `$this->mediaSiteVersion` by session
+			$targetMediaSiteVersion = $this->mediaSiteVersion;
+		} else {
+			// redirect to requested version by `$requestMediaSiteVersion`:
+			$targetMediaSiteVersion = $requestMediaSiteVersion;
 		}
-		return TRUE;
+		// store target media site version in locale context and session and redirect
+		$this->redirectToTargetMediaSiteVersion(
+			$this->setUpMediaSiteVersionToContextAndSession($targetMediaSiteVersion)
+		);
 	}
 
 	/**
-	 * Try to set up into `\MvcCore\Request` object new 
-	 * media site version detected from requested url by url path prefix
-	 * or by url query string param. If there is catched any valid media site 
-	 * version - set this value into request object. If there is nothing catched,
-	 * set into request object full media site version anyway.
-	 * @return void
+	 * Set up media site version string into current context and into session and return it.
+	 * @param string $targetMediaSiteVersion 
+	 * @return string
 	 */
-	protected function setUpRequestMediaVersionFromUrl () {
-		$routesDefined = count($this->routes) > 0;
-		$mediaSiteVersionCatchedInPath = FALSE;
-		if ($routesDefined) {
-			$requestPath = $this->request->GetPath(TRUE);
-			foreach ($this->allowedSiteKeysAndUrlPrefixes as $mediaSiteVersion => $requestPathPrefix) {
-				if (mb_strpos($requestPath, $requestPathPrefix . '/') === 0) {
-					if (mb_strlen($requestPathPrefix) > 0)
-						$mediaSiteVersionCatchedInPath = TRUE;
-					$this->request
-						->SetMediaSiteVersion($mediaSiteVersion)
-						->SetPath(mb_substr($requestPath, strlen($requestPathPrefix)));
-					break;
-				}
-			}
-		}
-		if (!$routesDefined || !$mediaSiteVersionCatchedInPath) {
-			$requestMediaVersion = $this->request->GetParam(static::MEDIA_VERSION_URL_PARAM, 'a-zA-Z');
-			$requestMediaVersionValidStr = $requestMediaVersion && strlen($requestMediaVersion) > 0;
-			if ($requestMediaVersionValidStr) 
-				$requestMediaVersion = strtolower($requestMediaVersion);
-			if ($requestMediaVersionValidStr && isset($this->allowedSiteKeysAndUrlPrefixes[$requestMediaVersion])) {
-				$mediaSiteVersion = $requestMediaVersion;
-			} else {
-				$mediaSiteVersion = static::MEDIA_VERSION_FULL;
-			}
-			$this->request->SetMediaSiteVersion($mediaSiteVersion);
-		}
+	protected function setUpMediaSiteVersionToContextAndSession ($targetMediaSiteVersion) {
+		$this->session->{static::MEDIA_VERSION_URL_PARAM} = $targetMediaSiteVersion;
+		$this->mediaSiteVersion = $targetMediaSiteVersion;
+		return $targetMediaSiteVersion;
 	}
 }

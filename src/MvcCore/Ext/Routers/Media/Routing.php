@@ -219,7 +219,7 @@ trait Routing
 	 * @return bool
 	 */
 	protected function checkMediaVersionWithUrlAndRedirectIfNecessary() {
-		$requestMediaSiteVersion = $request->GetMediaSiteVersion();
+		$requestMediaSiteVersion = $this->request->GetMediaSiteVersion();
 		if ($this->mediaSiteVersion === $requestMediaSiteVersion) return TRUE;
 		// if requested media site version is not the same as version in session 
 		// fix it by `$this->stricModeBySession` configuration:

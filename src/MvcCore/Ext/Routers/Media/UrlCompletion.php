@@ -40,8 +40,9 @@ trait UrlCompletion
 	public function UrlByRoute (\MvcCore\Interfaces\IRoute & $route, & $params = []) {
 		/** @var $route \MvcCore\Route */
 		$requestedUrlParams = $this->GetRequestedUrlParams();
-		$mediaSiteVersion = NULL;
+		
 		$mediaVersionUrlParam = static::MEDIA_VERSION_URL_PARAM;
+		
 		if (isset($params[$mediaVersionUrlParam])) {
 			$mediaSiteVersion = $params[$mediaVersionUrlParam];
 			unset($params[$mediaVersionUrlParam]);
@@ -51,27 +52,24 @@ trait UrlCompletion
 		} else {
 			$mediaSiteVersion = $this->mediaSiteVersion;
 		}
-		if ($this->stricModeBySession && $mediaSiteVersion !== $this->mediaSiteVersion) {
-			$sessStrictModeSwitchUrlParam = static::SWITCH_MEDIA_VERSION_URL_PARAM;
-			$params[$sessStrictModeSwitchUrlParam] = $mediaSiteVersion;
-		}
-		$routeUrl = $route->Url(
+		if (!isset($this->allowedSiteKeysAndUrlPrefixes[$mediaSiteVersion]))
+			throw new \InvalidArgumentException(
+				'['.__CLASS__.'] Not allowed media site version used to generate url: `'
+				.$mediaSiteVersion.'`. Allowed values: `'
+				.implode('`, `', array_keys($this->allowedSiteKeysAndUrlPrefixes)) . '`.'
+			);
+
+		if ($this->stricModeBySession && $mediaSiteVersion !== $this->mediaSiteVersion) 
+			$params[static::SWITCH_MEDIA_VERSION_URL_PARAM] = $mediaSiteVersion;
+
+		$result = $route->Url(
 			$params, $requestedUrlParams, $this->getQueryStringParamsSepatator()
 		);
-		$mediaSiteUrlPrefix = '';
-		if ($mediaSiteVersion) {
-			if (isset($this->allowedSiteKeysAndUrlPrefixes[$mediaSiteVersion])) {
-				$mediaSiteUrlPrefix = $this->allowedSiteKeysAndUrlPrefixes[$mediaSiteVersion];
-			} else {
-				throw new \InvalidArgumentException(
-					'['.__CLASS__.'] Not allowed media site version used to generate url: `'
-					.$mediaSiteVersion.'`. Allowed values: `'
-					.implode('`, `', array_keys($this->allowedSiteKeysAndUrlPrefixes)) . '`.'
-				);
-			}
-		}
+
+		$mediaSiteUrlPrefix = $this->allowedSiteKeysAndUrlPrefixes[$mediaSiteVersion];
+
 		return $this->request->GetBasePath() 
 			. $mediaSiteUrlPrefix 
-			. $routeUrl;
+			. $result;
 	}
 }

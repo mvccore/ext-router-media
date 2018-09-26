@@ -26,6 +26,7 @@ implements	\MvcCore\Ext\Routers\IMedia,
 	use \MvcCore\Ext\Routers\Extended;
 	use \MvcCore\Ext\Routers\Media\PropsGettersSetters;
 	use \MvcCore\Ext\Routers\Media\Routing;
+	use \MvcCore\Ext\Routers\Media\Redirecting;
 	use \MvcCore\Ext\Routers\Media\UrlCompletion;
 	
 	/**
@@ -39,7 +40,28 @@ implements	\MvcCore\Ext\Routers\IMedia,
 	 * @return bool
 	 */
 	public function Route () {
+		if (!$this->redirectToProperTrailingSlashIfNecessary()) return FALSE;
+		$request = & $this->request;
+		$requestCtrlName = $request->GetControllerName();
+		$requestActionName = $request->GetActionName();
+		$this->anyRoutesConfigured = count($this->routes) > 0;
+		$this->preRoutePrepare();
+		if (!$this->preRoutePrepareMedia()) return FALSE;
 		if (!$this->preRouteMedia()) return FALSE;
-		return parent::Route();
+		if ($requestCtrlName && $requestActionName) {
+			$this->routeByControllerAndActionQueryString($requestCtrlName, $requestActionName);
+		} else {
+			$this->routeByRewriteRoutes($requestCtrlName, $requestActionName);
+		}
+		if ($this->currentRoute === NULL && (
+			($request->GetPath() == '/' || $request->GetPath() == $request->GetScriptName()) ||
+			$this->routeToDefaultIfNotMatch
+		)) {
+			list($dfltCtrl, $dftlAction) = $this->application->GetDefaultControllerAndActionNames();
+			$this->SetOrCreateDefaultRouteAsCurrent(
+				\MvcCore\Interfaces\IRouter::DEFAULT_ROUTE_NAME, $dfltCtrl, $dftlAction
+			);
+		}
+		return $this->currentRoute instanceof \MvcCore\Interfaces\IRoute;
 	}
 }

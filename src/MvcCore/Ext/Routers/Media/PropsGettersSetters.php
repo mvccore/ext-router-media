@@ -62,6 +62,12 @@ trait PropsGettersSetters
 	 * @var string|NULL
 	 */
 	protected $sessionMediaSiteVersion = NULL;
+
+	/**
+	 * Requested media site version.
+	 * @var string|NULL
+	 */
+	protected $requestMediaSiteVersion = NULL;
 	
 	
 	/*************************************************************************************

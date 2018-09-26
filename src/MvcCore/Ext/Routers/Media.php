@@ -28,10 +28,18 @@ implements	\MvcCore\Ext\Routers\IMedia,
 	use \MvcCore\Ext\Routers\Media\Routing;
 	use \MvcCore\Ext\Routers\Media\UrlCompletion;
 	
-	public function & Route () {
-		$result = FALSE;
-		if ($this->preRouteMedia() === FALSE) return $result;
-		$result = parent::Route();
-		return $result;
+	/**
+	 * MvcCore Extension - Router Media - version:
+	 * Comparation by PHP function version_compare();
+	 * @see http://php.net/manual/en/function.version-compare.php
+	 */
+	const VERSION = '5.0.0-alpha';
+
+	/**
+	 * @return bool
+	 */
+	public function Route () {
+		if (!$this->preRouteMedia()) return FALSE;
+		return parent::Route();
 	}
 }

@@ -35,7 +35,6 @@ trait Routing
 	 * @return bool
 	 */
 	protected function preRouteMedia () {
-		$result = TRUE;
 		$this->preRoutePrepare();
 		$this->preRoutePrepareMedia();
 		
@@ -46,7 +45,7 @@ trait Routing
 			// if there is detected in requested url media site version switching param,
 			// store switching param value in session, remove param from `$_GET` 
 			// and redirect to the same page with new media site version:
-			$result = $this->manageMediaSwitchingAndRedirect();
+			if (!$this->manageMediaSwitchingAndRedirect()) return FALSE;
 
 		} else if (
 			(($this->isGet && $this->routeGetRequestsOnly) || !$this->routeGetRequestsOnly) && 
@@ -55,21 +54,20 @@ trait Routing
 			// if there is no session record about media site version:
 			$this->manageMediaDetectionAndStoreInSession();
 			// check if media site version is the same as local media site version:
-			$result = $this->checkMediaVersionWithUrlAndRedirectIfNecessary();
+			if (!$this->checkMediaVersionWithUrlAndRedirectIfNecessary()) return FALSE;
 
 		} else {
 			// if there is media site version in session already:
 			$this->mediaSiteVersion = $this->sessionMediaSiteVersion;
 			// check if media site version is the same as local media site version:
-			$result = $this->checkMediaVersionWithUrlAndRedirectIfNecessary();
+			if (!$this->checkMediaVersionWithUrlAndRedirectIfNecessary()) return FALSE;
 		}
 
 		// set up stored/detected media site version into request:
 		if ($this->mediaSiteVersion)
 			$this->request->SetMediaSiteVersion($this->mediaSiteVersion);
 		
-		// return `TRUE` or `FALSE` to break or not the routing process
-		return $result;
+		return TRUE;
 	}
 
 	/**

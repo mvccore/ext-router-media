@@ -21,13 +21,6 @@ namespace MvcCore\Ext\Routers;
 interface IMedia
 {
 	/**
-	 * MvcCore Extension - Router Media - version:
-	 * Comparation by PHP function version_compare();
-	 * @see http://php.net/manual/en/function.version-compare.php
-	 */
-	const VERSION = '5.0.0-alpha';
-
-	/**
 	 * Media site key controller property value for full site version.
 	 * @var string
 	 */

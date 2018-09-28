@@ -26,7 +26,7 @@ Add this to `Bootstrap.php` or to **very application beginning**,
 before application routing or any other extension configuration
 using router for any purposes:
 ```php
-\MvcCore\Application::GetInstance()->SetRouterClass(\MvcCore\Ext\Routers\Media::class);
+\MvcCore\Application::GetInstance()->SetRouterClass('\\MvcCore\\Ext\\Routers\Media');
 ```
 
 ## Configuration

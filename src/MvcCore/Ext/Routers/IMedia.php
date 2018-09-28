@@ -99,10 +99,10 @@ interface IMedia
 	 *		);`
 	 *	Output:
 	 *		`/application/base-bath/m/products-list/cool-product-name/blue?variant[]=L&amp;variant[]=XL"`
-	 * @param \MvcCore\Interfaces\IRoute &$route
+	 * @param \MvcCore\IRoute &$route
 	 * @param array $params
 	 * @throws \InvalidArgumentException
 	 * @return string
 	 */
-	public function UrlByRoute (\MvcCore\Interfaces\IRoute & $route, & $params = []);
+	public function UrlByRoute (\MvcCore\IRoute & $route, & $params = []);
 }

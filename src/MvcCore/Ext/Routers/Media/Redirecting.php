@@ -44,7 +44,7 @@ trait Redirecting
 			$amp = $this->getQueryStringParamsSepatator();
 			$targetUrl .= '?' . str_replace('%2F', '/', http_build_query($this->requestGlobalGet, '', $amp));
 		}
-		$this->redirect($targetUrl, \MvcCore\Interfaces\IResponse::SEE_OTHER);
+		$this->redirect($targetUrl, \MvcCore\IResponse::SEE_OTHER);
 		return FALSE;
 	}
 }

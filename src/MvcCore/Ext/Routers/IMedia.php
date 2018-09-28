@@ -17,6 +17,7 @@ namespace MvcCore\Ext\Routers;
  * Responsibility - recognize media site version from url or user agent or session and set 
  *					up request object, complete automaticly rewrited url with remembered 
  *					media site version. Redirect to proper media site version by configuration.
+ *					Than route request like parent class does.
  */
 interface IMedia
 {
@@ -84,7 +85,7 @@ interface IMedia
 
 	/**
 	 * Complete non-absolute, non-localized url by route instance reverse info.
-	 * If there is key `mediaSiteVersion` in `$params`, unset this param before
+	 * If there is key `media_version` in `$params`, unset this param before
 	 * route url completing and choose by this param url prefix to prepend 
 	 * into completed url string.
 	 * Example:
@@ -94,15 +95,44 @@ interface IMedia
 	 *		`array(
 	 *			"name"			=> "cool-product-name",
 	 *			"color"			=> "red",
-	 *			"variant"		=> array("L", "XL"),
-	 *			"mediaSiteVersion"	=> "mobile",
+	 *			"variant"		=> ["L", "XL"],
+	 *			"media_version"	=> "mobile",
 	 *		);`
 	 *	Output:
-	 *		`/application/base-bath/m/products-list/cool-product-name/blue?variant[]=L&amp;variant[]=XL"`
+	 *		`/application/base-path/m/products-list/cool-product-name/blue?variant[]=L&amp;variant[]=XL"`
 	 * @param \MvcCore\IRoute &$route
 	 * @param array $params
 	 * @throws \InvalidArgumentException
 	 * @return string
 	 */
 	public function UrlByRoute (\MvcCore\IRoute & $route, & $params = []);
+
+	/**
+	 * Route current application request by configured routes list or by query string data.
+	 * - Set up before routing media site version from previous request (from session)
+	 *   or try to recognize media site version by `User-Agent` http header. If requested
+	 *   version is different than recognized version (or also for more conditions by 
+	 *   configuration), redirect user to proper media website version and route there again.
+	 * - If there is strictly defined `controller` and `action` value in query string,
+	 *   route request by given values, add new route and complete new empty
+	 *   `\MvcCore\Router::$currentRoute` route with `controller` and `action` values from query string.
+	 * - If there is no strictly defined `controller` and `action` value in query string,
+	 *   go throught all configured routes and try to find matching route:
+	 *   - If there is catched any matching route:
+	 *	 - Set up `\MvcCore\Router::$currentRoute`.
+	 *	 - Reset `\MvcCore\Request::$params` again with with default route params,
+	 *	   with request params itself and with params parsed from matching process.
+	 * - If there is no route matching the request and also if the request is targeting homepage
+	 *   or there is no route matching the request and also if the request is targeting something
+	 *   else and also router is configured to route to default controller and action if no route
+	 *   founded, complete `\MvcCore\Router::$currentRoute` with new empty automaticly created route
+	 *   targeting default controller and action by configuration in application instance (`Index:Index`)
+	 *   and route type create by configured `\MvcCore\Application::$routeClass` class name.
+	 * - Return `TRUE` if `\MvcCore\Router::$currentRoute` is route instance or `FALSE` for redirection.
+	 *
+	 * This method is always called from core routing by:
+	 * - `\MvcCore\Application::Run();` => `\MvcCore\Application::routeRequest();`.
+	 * @return bool
+	 */
+	public function Route ();
 }

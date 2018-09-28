@@ -16,7 +16,8 @@ namespace MvcCore\Ext\Routers\Media;
 trait Redirecting
 {
 	/**
-	 * Redirect to target media site version with path and query string.
+	 * Redirect to target media site version with path and by cloned request 
+	 * object global `$_GET` collection. Return always `FALSE`.
 	 * @param string $targetMediaSiteVersion 
 	 * @return bool
 	 */

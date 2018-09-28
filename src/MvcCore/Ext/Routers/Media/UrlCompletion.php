@@ -17,7 +17,7 @@ trait UrlCompletion
 {
 	/**
 	 * Complete non-absolute, non-localized url by route instance reverse info.
-	 * If there is key `mediaSiteVersion` in `$params`, unset this param before
+	 * If there is key `media_version` in `$params`, unset this param before
 	 * route url completing and choose by this param url prefix to prepend 
 	 * into completed url string.
 	 * Example:
@@ -27,11 +27,11 @@ trait UrlCompletion
 	 *		`array(
 	 *			"name"			=> "cool-product-name",
 	 *			"color"			=> "red",
-	 *			"variant"		=> array("L", "XL"),
-	 *			"mediaSiteVersion"	=> "mobile",
+	 *			"variant"		=> ["L", "XL"],
+	 *			"media_version"	=> "mobile",
 	 *		);`
 	 *	Output:
-	 *		`/application/base-bath/m/products-list/cool-product-name/blue?variant[]=L&amp;variant[]=XL"`
+	 *		`/application/base-path/m/products-list/cool-product-name/blue?variant[]=L&amp;variant[]=XL"`
 	 * @param \MvcCore\Route|\MvcCore\IRoute &$route
 	 * @param array $params
 	 * @throws \InvalidArgumentException

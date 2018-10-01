@@ -18,8 +18,8 @@ templates, CSS and js files for mobiles, tablets or desktops.
 	3.2. [How It Works - Url Completing](#user-content-32-how-it-works---url-completing)  
 4. [Usage](#user-content-4-usage)  
 5. [Configuration](#user-content-5-configuration)  
-	5.1. [Configuration - Session Expiration](#user-content-51-configuration---session-expiration)  
-	5.2. [Configuration - Media Url Prefixes And Allowed Media Versions](#user-content-52-configuration---media-url-prefixes-and-allowed-media-versions)  
+	5.1. [Configuration - Media Url Prefixes And Allowed Media Versions](#user-content-51-configuration---media-url-prefixes-and-allowed-media-versions)  
+	5.2. [Configuration - Session Expiration](#user-content-52-configuration---session-expiration)  
 	5.3. [Configuration - Strict Session Mode](#user-content-53-configuration---strict-session-mode)  
 	5.4. [Configuration - Routing `GET` Requests Only](#user-content-54-configuration---routing-get-requests-only)  
 
@@ -102,21 +102,7 @@ $router = & \MvcCore\Router::GetInstance();
 
 ## 5. Configuration
 
-### 5.1. Configuration - Session Expiration
-There is possible to change session expiration about detected media
-site version value to not recognize media site version every request
-where is no prefix in URL, because to process all regular expressions 
-in `\Mobile_Detect` library could take some time. By **default** there is **1 hour**. 
-You can change it by:
-```php
-$router->SetSessionExpirationSeconds(
-    \MvcCore\Session::EXPIRATION_SECONDS_DAY
-);
-```
-
-[go to top](#user-content-outline)
-
-### 5.2. Configuration - Media Url Prefixes And Allowed Media Versions
+### 5.1. Configuration - Media Url Prefixes And Allowed Media Versions
 There are configured three media site versions with URL address prefixes by default:
 ```php
 use \MvcCore\Ext\Routers;
@@ -141,6 +127,20 @@ $router->SetAllowedSiteKeysAndUrlPrefixes([
     // you need to define it as the last item!
     Routers\Media::MEDIA_VERSION_FULL    => '',
 ]);
+```
+
+[go to top](#user-content-outline)
+
+### 5.2. Configuration - Session Expiration
+There is possible to change session expiration about detected media
+site version value to not recognize media site version every request
+where is no prefix in URL, because to process all regular expressions 
+in `\Mobile_Detect` library could take some time. By **default** there is **1 hour**. 
+You can change it by:
+```php
+$router->SetSessionExpirationSeconds(
+    \MvcCore\Session::EXPIRATION_SECONDS_DAY
+);
 ```
 
 [go to top](#user-content-outline)

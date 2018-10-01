@@ -61,7 +61,7 @@ trait UrlCompletion
 
 		if ($this->stricModeBySession && $mediaSiteVersion !== $this->mediaSiteVersion) 
 			$params[static::SWITCH_MEDIA_VERSION_URL_PARAM] = $mediaSiteVersion;
-
+		
 		$result = $route->Url(
 			$params, $requestedUrlParams, $this->getQueryStringParamsSepatator()
 		);

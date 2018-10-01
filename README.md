@@ -19,10 +19,10 @@ templates, CSS and js files for mobiles, tablets or desktops.
 4. [Usage](#user-content-4-usage)  
 	4.1. [Usage - `Bootstrap` Initialization](#user-content-41-usage---bootstrap-initialization)  
 	4.2. [Usage - Media Url Prefixes And Allowed Media Versions](#user-content-42-usage---media-url-prefixes-and-allowed-media-versions)  
-5. [Configuration](#user-content-5-configuration)  
-	5.1. [Configuration - Session Expiration](#user-content-51-configuration---session-expiration)  
-	5.2. [Configuration - Strict Session Mode](#user-content-52-configuration---strict-session-mode)  
-	5.3. [Configuration - Routing `GET` Requests Only](#user-content-53-configuration---routing-get-requests-only)  
+5. [Advanced Configuration](#user-content-5-advanced-configuration)  
+	5.1. [Advanced Configuration - Session Expiration](#user-content-51-advanced-configuration---session-expiration)  
+	5.2. [Advanced Configuration - Strict Session Mode](#user-content-52-advanced-configuration---strict-session-mode)  
+	5.3. [Advanced Configuration - Routing `GET` Requests Only](#user-content-53-advanced-configuration---routing-get-requests-only)  
 
 ## 1. Installation
 ```shell
@@ -135,9 +135,9 @@ $router->SetAllowedSiteKeysAndUrlPrefixes([
 
 [go to top](#user-content-outline)
 
-## 5. Configuration
+## 5. Advanced Configuration
 
-### 5.1. Configuration - Session Expiration
+### 5.1. Advanced Configuration - Session Expiration
 There is possible to change session expiration about detected media
 site version value to not recognize media site version every request
 where is no prefix in URL, because to process all regular expressions 
@@ -151,7 +151,7 @@ $router->SetSessionExpirationSeconds(
 
 [go to top](#user-content-outline)
 
-### 5.2. Configuration - Strict Session Mode
+### 5.2. Advanced Configuration - Strict Session Mode
 **In session strict mode, there is not possible to change media site version only by requesting different media site version prefix in URL.**
 Stric session mode is router mode when media site version is managed by session value from the first request recognition. 
 All requests to different media site version than the version in session are automatically redirected to media site version stored in the session.
@@ -175,7 +175,7 @@ $router->SetStricModeBySession(TRUE);
 
 [go to top](#user-content-outline)
 
-### 5.3. Configuration - Routing `GET` Requests Only
+### 5.3. Advanced Configuration - Routing `GET` Requests Only
 The router manages media site version only for `GET` requests. It means
 redirections to the proper version in session strict mode or to redirect
 in the first request to recognized media site version. `POST` requests

@@ -77,6 +77,7 @@ using router for any purposes:
 $app = & \MvcCore\Application::GetInstance();
 $app->SetRouterClass('\MvcCore\Ext\Routers\Media');
 ...
+// to get router instance for next configuration:
 /** @var $router \MvcCore\Ext\Routers\Media */
 $router = & \MvcCore\Router::GetInstance();
 ```

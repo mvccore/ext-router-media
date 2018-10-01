@@ -57,12 +57,12 @@ To allow only selected media site versions and to configure url prefixes, you ca
 use \MvcCore\Ext\Routers;
 ...
 // now, tablet version is not allowed:
-$router->SetAllowedSiteKeysAndUrlPrefixes(array(
+$router->SetAllowedSiteKeysAndUrlPrefixes([
 	Routers\Media::MEDIA_VERSION_MOBILE	=> '/mobile',
 	// if you are using an empty string url prefix for full version, 
 	// you need to define it as the last item!
 	Routers\Media::MEDIA_VERSION_FULL	=> '',
-));
+]);
 ```
 
 ### Strict session mode
@@ -91,4 +91,16 @@ redirected to mobile application version with mobile url prefixes everywhere.
 To have this session strict mode, you only need to configure router by:
 ```php
 $router->SetStricModeBySession(TRUE);
+```
+
+### Routing `GET` requests only
+Router manages media site version only for `GET` requests. It means
+redirections to proper version in session stric mode or to redirect
+in first request to recognized media site version. `POST` requests
+and other request methods to manage for media site version doesn't 
+make sence. For those requests, you have still media site version 
+record in session and you can use it any time. But to process all
+request methods, you can configure router to do so like this:
+```php
+$router->SetRouteGetRequestsOnly(FALSE);
 ```

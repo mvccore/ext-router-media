@@ -20,9 +20,9 @@ templates, CSS and js files for mobiles, tablets or desktops.
 	4.1. [Usage - `Bootstrap` Initialization](#user-content-41-usage---initialization)  
 	4.2. [Usage - Media Url Prefixes And Allowed Media Versions](#user-content-42-usage---media-url-prefixes-and-allowed-media-versions)  
 5. [Configuration](#user-content-5-configuration)  
-	5.1. [Configuration - Session Expiration](#user-content-52-configuration---session-expiration)  
-	5.2. [Configuration - Strict Session Mode](#user-content-53-configuration---strict-session-mode)  
-	5.3. [Configuration - Routing `GET` Requests Only](#user-content-54-configuration---routing-get-requests-only)  
+	5.1. [Configuration - Session Expiration](#user-content-51-configuration---session-expiration)  
+	5.2. [Configuration - Strict Session Mode](#user-content-52-configuration---strict-session-mode)  
+	5.3. [Configuration - Routing `GET` Requests Only](#user-content-53-configuration---routing-get-requests-only)  
 
 ## 1. Installation
 ```shell

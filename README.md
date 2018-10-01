@@ -27,7 +27,7 @@ composer require mvccore/ext-router-media
 
 ## How It Works
 
-## How It Works - Routing
+### How It Works - Routing
 - Router completes media site versions from these sources:
 	- From requested URL (if there is no media site prefix in URL, it's completed to `full`).
 	- From session (if there is nothing, it stays on `NULL`).
@@ -51,7 +51,7 @@ composer require mvccore/ext-router-media
 - Router removes any founded media site version URL prefix to process routing for any media site version with the same request path.
 - Then the router, routes request in a standard way.
 	
-## How It Works - Url Completing
+### How It Works - Url Completing
 - The router generates URL addresses always with the same media site version as requested media site version:
 	- For addresses without any defined rewrite route, there is added into query string additional param about media site version (`&media_version=...`).
 	- For addresses with defined rewrite route, there is prepended media site version URL prefix by router configuration.
@@ -74,7 +74,7 @@ $router = & \MvcCore\Router::GetInstance();
 
 ## Configuration
 
-### Session expiration
+### Configuration - Session Expiration
 There is possible to change session expiration about detected media
 site version value to not recognize media site version every request
 where is no prefix in URL, because to process all regular expressions 
@@ -86,7 +86,7 @@ $router->SetSessionExpirationSeconds(
 );
 ```
 
-### Media url prefixes and allowed media versions
+### Configuration - Media Url Prefixes And Allowed Media Versions
 There are configured three media site versions with URL address prefixes by default:
 ```php
 use \MvcCore\Ext\Routers;
@@ -113,7 +113,7 @@ $router->SetAllowedSiteKeysAndUrlPrefixes([
 ]);
 ```
 
-### Strict session mode
+### Strict Session Mode
 **In session strict mode, there is not possible to change media site version only by requesting different media site version prefix in URL.**
 Stric session mode is router mode when media site version is managed by session value from the first request recognition. 
 All requests to different media site version than the version in session are automatically redirected to media site version stored in the session.
@@ -135,7 +135,7 @@ To have this session strict mode, you only need to configure router by:
 $router->SetStricModeBySession(TRUE);
 ```
 
-### Routing `GET` requests only
+### Routing `GET` Requests Only
 The router manages media site version only for `GET` requests. It means
 redirections to the proper version in session strict mode or to redirect
 in the first request to recognized media site version. `POST` requests

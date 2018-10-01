@@ -28,6 +28,8 @@ templates, CSS and js files for mobiles, tablets or desktops.
 composer require mvccore/ext-router-media
 ```
 
+[go to top](#user-content-outline)
+
 ## Features
 
 ### Features - Routing

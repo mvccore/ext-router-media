@@ -56,6 +56,21 @@ composer require mvccore/ext-router-media
 	  routing for any media site version with the same request path.
 	- Than router routes request in standard way.
 - Url completing
+	- Router generates url adresses always with the same media site version
+	  as requested media site version version:
+	  	- For addresses without any defined rewrite route, there is added into query 
+	      string additional param about media site version (`&media_version=...`).
+		- For addresses with defined rewrite route, there is prepended media site 
+		  version url prefix by ruter configuration.
+	- If requested version is `full` (`full` is by default), there is not necessary
+	  to put into url addresses any additional data, so for `full` version, there 
+	  is always the same original url string without any special params or prefixes.
+	- If you define info build-in `Url()` method into second argument array into
+	  params any different media site version than requested media version is,
+	  there is added into result url string query param or media site url prefix 
+	  by given media site version.
+	- if there is configured session strict mode, special `$_GET` switching param
+	  is always added automaticly.
 
 ## Usage
 Add this to `/App/Bootstrap.php` or to **very application beginning**, 

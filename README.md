@@ -17,7 +17,7 @@ templates, CSS and js files for mobiles, tablets or desktops.
 	3.1. [How It Works - Routing](#user-content-31-how-it-works---routing)  
 	3.2. [How It Works - Url Completing](#user-content-32-how-it-works---url-completing)  
 4. [Usage](#user-content-4-usage)  
-	4.1. [Usage - `Bootstrap` Initialization](#user-content-41-usage---initialization)  
+	4.1. [Usage - `Bootstrap` Initialization](#user-content-41-usage---bootstrap-initialization)  
 	4.2. [Usage - Media Url Prefixes And Allowed Media Versions](#user-content-42-usage---media-url-prefixes-and-allowed-media-versions)  
 5. [Configuration](#user-content-5-configuration)  
 	5.1. [Configuration - Session Expiration](#user-content-51-configuration---session-expiration)  

@@ -96,6 +96,17 @@ $router->SetSessionExpirationSeconds(
 ```
 
 ### Media url prefixes and allowed media versions
+There are configured three media site versions with URL address prefixes by default:
+```php
+use \MvcCore\Ext\Routers;
+...
+$router->SetAllowedSiteKeysAndUrlPrefixes([
+    Routers\Media::MEDIA_VERSION_MOBILE	=> '/m',
+    Routers\Media::MEDIA_VERSION_TABLET	=> '/t',
+    Routers\Media::MEDIA_VERSION_FULL	=> '',
+]);
+```
+
 To allow only selected media site versions and to configure url prefixes, you can use:
 ```php
 // to allow only mobile version (with url prefix '/mobile') 

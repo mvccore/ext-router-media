@@ -117,7 +117,10 @@ trait Routing
 		if ($this->requestMediaSiteVersion === NULL && $this->anyRoutesConfigured) {
 			$requestPath = $this->request->GetPath(TRUE);
 			foreach ($this->allowedSiteKeysAndUrlPrefixes as $mediaSiteVersion => $requestPathPrefix) {
-				if (mb_strpos($requestPath, $requestPathPrefix . '/') === 0 || $requestPath === $requestPathPrefix) {
+				if (
+					mb_strpos($requestPath, $requestPathPrefix . '/') === 0 || 
+					$requestPath === $requestPathPrefix
+				) {
 					$this->requestMediaSiteVersion = $mediaSiteVersion;
 					$this->request->SetPath(mb_substr($requestPath, mb_strlen($requestPathPrefix)));
 					break;
@@ -166,6 +169,7 @@ trait Routing
 		}
 		$mediaVersionUrlParam = static::MEDIA_VERSION_URL_PARAM;
 		$this->session->{$mediaVersionUrlParam} = $this->mediaSiteVersion;
+		$this->firstRequestMediaDetection = $this->mediaSiteVersion === $this->requestMediaSiteVersion;
 	}
 
 	/**
@@ -186,6 +190,10 @@ trait Routing
 		) {
 			// redirect back to `$this->mediaSiteVersion` by session
 			$targetMediaSiteVersion = $this->mediaSiteVersion;
+		} else if ($this->firstRequestMediaDetection === FALSE) {
+			// redirect only if detected version is different than requested version
+			$targetMediaSiteVersion = $this->mediaSiteVersion;
+			$this->mediaSiteVersion = $targetMediaSiteVersion;
 		} else {
 			// redirect to requested version by `$this->requestMediaSiteVersion`:
 			$targetMediaSiteVersion = $this->requestMediaSiteVersion;

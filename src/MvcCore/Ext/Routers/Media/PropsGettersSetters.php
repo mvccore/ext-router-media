@@ -68,6 +68,19 @@ trait PropsGettersSetters
 	 * @var string|NULL
 	 */
 	protected $requestMediaSiteVersion = NULL;
+
+	/**
+	 * If `NULL`, request was not first, there was something in session stored by 
+	 * previous requests. 
+	 * If `TRUE`, request was first, nothing was in session from previous requests 
+	 * and detected version is the same as requested media site version. 
+	 * 
+	 * If `FALSE`, request was first, nothing was in session from previous requests 
+	 * and detected version is different from requested media site version. 
+	 * There is necessary to redirect user to detected version from first request.
+	 * @var bool|NULL
+	 */
+	protected $firstRequestMediaDetection = NULL;
 	
 	
 	/*************************************************************************************

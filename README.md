@@ -28,7 +28,11 @@ Add this to `/App/Bootstrap.php` or to **very application beginning**,
 before application routing or any other extension configuration
 using router for any purposes:
 ```php
-\MvcCore\Application::GetInstance()->SetRouterClass('\MvcCore\Ext\Routers\Media');
+$app = & \MvcCore\Application::GetInstance();
+$app->SetRouterClass('\MvcCore\Ext\Routers\Media');
+...
+/** @var $router \MvcCore\Ext\Routers\Media */
+$router = & \MvcCore\Router::GetInstance();
 ```
 
 ## Configuration
@@ -36,37 +40,55 @@ using router for any purposes:
 ### Session expiration
 There is possible to change session expiration about detected media
 site version value to not recognize media site version every request
-where is no prefix in url, because all regular expressions in `Mobile_Detect`
-library could takes some time. By **default** there is **1 hour**. 
+where is no prefix in url, because to process all regular expressions 
+in `\Mobile_Detect` library could take some time. By **default** there is **1 hour**. 
 You can change it by:
 ```php
-\MvcCore\Ext\Routers\Media::GetInstance()->SetSessionExpirationSeconds(86400); // day
+$router->SetSessionExpirationSeconds(
+	\MvcCore\Session::EXPIRATION_SECONDS_DAY
+);
 ```
 
 ### Media url prefixes and allowed media versions
-To allow only some media site versions and configure url prefixes, you can use:
+To allow only selected media site versions and to configure url prefixes, you can use:
 ```php
 // to allow only mobile version (with url prefix '/mobile') 
 // and full version (with no url prefix):
-\MvcCore\Ext\Routers\Media::GetInstance()->SetAllowedSiteKeysAndUrlPrefixes(array(
-	\MvcCore\Ext\Routers\Media::MEDIA_VERSION_MOBILE	=> '/mobile',
-	\MvcCore\Ext\Routers\Media::MEDIA_VERSION_FULL		=> '',			// empty string as last item!
+use \MvcCore\Ext\Routers;
+...
+// now, tablet version is not allowed:
+$router->SetAllowedSiteKeysAndUrlPrefixes(array(
+	Routers\Media::MEDIA_VERSION_MOBILE	=> '/mobile',
+	// if you are using an empty string url prefix for full version, 
+	// you need to define it as the last item!
+	Routers\Media::MEDIA_VERSION_FULL	=> '',
 ));
 ```
 
 ### Strict session mode
-To change managing user media version into more strict mode,
-where is not possible to change media version only by request 
-application with different media prefix in path like:
-```
-/mobile/any/application/request/path
-```
-but ony where is possible to change media site version by 
-special `$_GET` param "switch_media_version" like:
-```
-/mobile/any/application/request/path?switch_media_version=mobile
-```
-you need to configure router into strict session mode by:
+Stric session mode is router mode, when media site version is managed
+by session value from the first request recognition. 
+
+Normally, there is possible to get different media site version only by 
+requesting different media site version url prefix. For example - to get 
+different version from `full` version, for example to get `mobile` version, 
+it's only necessary to request application with configured `mobile` prefix 
+in url like this: `/mobile/any/application/request/path`.
+
+**But in session strict mode, there is not possible to change media site 
+version only by requesting different media site version prefix in url.**
+All requests to different media site version then version in session are 
+automaticly redirected to media site version stored in session.
+
+In session strict mode, there is possible to change media site version only 
+by special `$_GET` parametter in your media version navigation. For example - 
+to get different version from `full` version, for eample `mobile` version, 
+you need to add into query string parametter like this:
+`/any/application/request/path?switch_media_version=mobile`
+Then, there is changed media site version stored in session and user is 
+redirected to mobile application version with mobile url prefixes everywhere.
+
+To have this session strict mode, you only need to configure router by:
 ```php
-\MvcCore\Ext\Routers\Media::GetInstance()->SetStricModeBySession(TRUE);
+$router->SetStricModeBySession(TRUE);
 ```

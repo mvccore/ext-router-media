@@ -123,18 +123,15 @@ $router->SetAllowedSiteKeysAndUrlPrefixes([
 ```
 
 ### Strict session mode
-Stric session mode is router mode when media site version is managed
-by session value from the first request recognition. 
+**In session strict mode, there is not possible to change media site version only by requesting different media site version prefix in URL.**
+Stric session mode is router mode when media site version is managed by session value from the first request recognition. 
+All requests to different media site version than the version in session are automatically redirected to media site version stored in the session.
 
 Normally, there is possible to get different media site version only by 
 requesting different media site version URL prefix. For example - to get 
 a different version from `full` version, for example, to get `mobile` version, 
 it's only necessary to request application with configured `mobile` prefix 
 in URL like this: `/mobile/any/application/request/path`.
-
-**But in session strict mode, there is not possible to change media site 
-version only by requesting different media site version prefix in URL.**
-All requests to different media site version than the version in session are automatically redirected to media site version stored in the session.
 
 In session strict mode, there is possible to change media site version only by special `$_GET` parameter in your media version navigation. For example - 
 to get a different version from `full` version, for example, `mobile` version, 

@@ -113,7 +113,7 @@ $router->SetAllowedSiteKeysAndUrlPrefixes([
 ]);
 ```
 
-### Strict Session Mode
+### Configuration - Strict Session Mode
 **In session strict mode, there is not possible to change media site version only by requesting different media site version prefix in URL.**
 Stric session mode is router mode when media site version is managed by session value from the first request recognition. 
 All requests to different media site version than the version in session are automatically redirected to media site version stored in the session.
@@ -135,7 +135,7 @@ To have this session strict mode, you only need to configure router by:
 $router->SetStricModeBySession(TRUE);
 ```
 
-### Routing `GET` Requests Only
+### Configuration - Routing `GET` Requests Only
 The router manages media site version only for `GET` requests. It means
 redirections to the proper version in session strict mode or to redirect
 in the first request to recognized media site version. `POST` requests

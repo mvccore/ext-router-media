@@ -9,19 +9,19 @@ to have media flag in the request, controller and view to render different
 templates, CSS and js files for mobiles, tablets or desktops.
 
 ## Outline
-- 1. [Installation](#user-content-installation)
-- 2. [Features](#user-content-features)
-- 2.1. [Features - Routing](#user-content-features---routing)
-- 2.2. [Features - Url Generating](#user-content-features---url-generating)
-- 3. [How It Works](#user-content-how-it-works)
-- 3.1. [How It Works - Routing](#user-content-how-it-works---routing)
-- 3.2. [How It Works - Url Completing](#user-content-how-it-works---url-completing)
-- 4. [Usage](#user-content-usage)
-- 5. [Configuration](#user-content-configuration)
-- 5.1. [Configuration - Session Expiration](#user-content-configuration---session-expiration)
-- 5.2. [Configuration - Media Url Prefixes And Allowed Media Versions](#user-content-configuration---media-url-prefixes-and-allowed-media-versions)
-- 5.3. [Configuration - Strict Session Mode](#user-content-configuration---strict-session-mode)
-- 5.4. [Configuration - Routing `GET` Requests Only](#user-content-configuration---routing-get-requests-only)
+1. [Installation](#user-content-installation)
+2. [Features](#user-content-features)
+2.1. [Features - Routing](#user-content-features---routing)
+2.2. [Features - Url Generating](#user-content-features---url-generating)
+3. [How It Works](#user-content-how-it-works)
+3.1. [How It Works - Routing](#user-content-how-it-works---routing)
+3.2. [How It Works - Url Completing](#user-content-how-it-works---url-completing)
+4. [Usage](#user-content-usage)
+5. [Configuration](#user-content-configuration)
+5.1. [Configuration - Session Expiration](#user-content-configuration---session-expiration)
+5.2. [Configuration - Media Url Prefixes And Allowed Media Versions](#user-content-configuration---media-url-prefixes-and-allowed-media-versions)
+5.3. [Configuration - Strict Session Mode](#user-content-configuration---strict-session-mode)
+5.4. [Configuration - Routing `GET` Requests Only](#user-content-configuration---routing-get-requests-only)
 
 ## Installation
 ```shell

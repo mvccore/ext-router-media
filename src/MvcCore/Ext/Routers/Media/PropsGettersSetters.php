@@ -75,6 +75,25 @@ trait PropsGettersSetters
 	 ************************************************************************************/
 
 	/**
+	 * Get url prefixes prepended before request url path to describe media site version in url.
+	 * Keys are media site version values and values in array are url prefixes, how
+	 * to describe media site version in url.
+	 * Full version with possible empty string prefix is necessary to have as last item.
+	 * If you do not want to use rewrite routes, just have under your alowed keys any values.
+	 * Example: 
+	 * ```
+	 * [
+	 *		'mobile'	=> '/m',// to have `/m` substring in every mobile url begin.
+	 *		'full'		=> '',	// to have nothing extra in url for full site version.
+	 * ];
+	 * ```
+	 * @return \MvcCore\Ext\Routers\Media|\MvcCore\Ext\Routers\IMedia
+	 */
+	public function & GetAllowedSiteKeysAndUrlPrefixes () {
+		return $this->allowedSiteKeysAndUrlPrefixes;
+	}
+
+	/**
 	 * Set url prefixes prepended before request url path to describe media site version in url.
 	 * Keys are media site version values and values in array are url prefixes, how
 	 * to describe media site version in url.

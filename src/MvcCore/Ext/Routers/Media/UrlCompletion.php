@@ -19,7 +19,7 @@ trait UrlCompletion
 	 * Complete non-absolute, non-localized url by route instance reverse info.
 	 * If there is key `media_version` in `$params`, unset this param before
 	 * route url completing and choose by this param url prefix to prepend 
-	 * into completed url string.
+	 * completed url string.
 	 * Example:
 	 *	Input (`\MvcCore\Route::$reverse`):
 	 *		`"/products-list/<name>/<color>"`
@@ -34,7 +34,6 @@ trait UrlCompletion
 	 *		`/application/base-path/m/products-list/cool-product-name/blue?variant[]=L&amp;variant[]=XL"`
 	 * @param \MvcCore\Route|\MvcCore\IRoute &$route
 	 * @param array $params
-	 * @throws \InvalidArgumentException
 	 * @return string
 	 */
 	public function UrlByRoute (\MvcCore\IRoute & $route, & $params = []) {
@@ -52,21 +51,25 @@ trait UrlCompletion
 		} else {
 			$mediaSiteVersion = $this->mediaSiteVersion;
 		}
-		if (!isset($this->allowedSiteKeysAndUrlPrefixes[$mediaSiteVersion]))
-			throw new \InvalidArgumentException(
-				'['.__CLASS__.'] Not allowed media site version used to generate url: `'
-				.$mediaSiteVersion.'`. Allowed values: `'
-				.implode('`, `', array_keys($this->allowedSiteKeysAndUrlPrefixes)) . '`.'
-			);
 
 		if ($this->stricModeBySession && $mediaSiteVersion !== $this->mediaSiteVersion) 
 			$params[static::SWITCH_MEDIA_VERSION_URL_PARAM] = $mediaSiteVersion;
+
+		if (isset($this->allowedSiteKeysAndUrlPrefixes[$mediaSiteVersion])) {
+			$mediaSiteUrlPrefix = $this->allowedSiteKeysAndUrlPrefixes[$mediaSiteVersion];
+		} else {
+			$mediaSiteUrlPrefix = '';
+			trigger_error(
+				'['.__CLASS__.'] Not allowed media site version used to generate url: `'
+				.$mediaSiteVersion.'`. Allowed values: `'
+				.implode('`, `', array_keys($this->allowedSiteKeysAndUrlPrefixes)) . '`.',
+				E_USER_ERROR
+			);
 		
 		$result = $route->Url(
 			$params, $requestedUrlParams, $this->getQueryStringParamsSepatator()
 		);
 
-		$mediaSiteUrlPrefix = $this->allowedSiteKeysAndUrlPrefixes[$mediaSiteVersion];
 
 		return $this->request->GetBasePath() 
 			. $mediaSiteUrlPrefix 

@@ -83,8 +83,8 @@ composer require mvccore/ext-router-media
 	- For addresses without any defined rewrite route, there is added into query string additional param about media site version (`&media_version=...`).
 	- For addresses with defined rewrite route, there is prepended media site version URL prefix by router configuration.
 - If requested version is `full` (`full` is by default), there is not necessary to put into URL addresses any additional data, so for `full` version, there is always the same original URL string without any special params or prefixes.
-- If you define info build-in `Url()` method into second argument array into params any different media site version than requested media version is, there is added into result URL string query param or media site URL prefix by given media site version.
-- if there is configured session strict mode, special `$_GET` switching param is always added automatically.
+- If you define into build-in `Url()` method into second argument array into params any different media site version than requested media version is, there is added into result URL string query param or media site URL prefix by given media site version.
+- If there is configured session strict mode, special `$_GET` switching param is always added automatically.
 
 [go to top](#user-content-outline)
 

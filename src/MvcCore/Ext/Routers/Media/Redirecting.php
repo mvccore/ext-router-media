@@ -25,26 +25,36 @@ trait Redirecting
 		// unset site key switch param and redirect to no switch param uri version
 		$request = & $this->request;
 		$mediaVersionUrlParam = static::MEDIA_VERSION_URL_PARAM;
-		if ($this->anyRoutesConfigured) {
-			$targetUrl = $request->GetBaseUrl()
-				. $this->allowedSiteKeysAndUrlPrefixes[$targetMediaSiteVersion] 
-				. $request->GetPath(TRUE);
-		} else {
-			$targetUrl = $request->GetBaseUrl();
-			if ($targetMediaSiteVersion === static::MEDIA_VERSION_FULL) {
+		$targetMediaSameAsDefault = $targetMediaSiteVersion === static::MEDIA_VERSION_FULL;
+
+		if (isset($this->requestGlobalGet[$mediaVersionUrlParam])) {
+			if ($targetMediaSameAsDefault) {
 				if (isset($this->requestGlobalGet[$mediaVersionUrlParam]))
 					unset($this->requestGlobalGet[$mediaVersionUrlParam]);
 			} else {
 				$this->requestGlobalGet[$mediaVersionUrlParam] = $targetMediaSiteVersion;
 			}
+			$targetMediaPrefix = '';
+		} else {
+			$targetMediaPrefix = $this->allowedSiteKeysAndUrlPrefixes[$targetMediaSiteVersion];
+		}
+
+		if ($this->anyRoutesConfigured) {
+			$targetUrl = $request->GetBaseUrl()
+				. $targetMediaPrefix
+				. $request->GetPath(TRUE);
+		} else {
+			$targetUrl = $request->GetBaseUrl();
 			$this->removeDefaultCtrlActionFromGlobalGet();
 			if ($this->requestGlobalGet)
 				$targetUrl .= $request->GetScriptName();
 		}
+
 		if ($this->requestGlobalGet) {
 			$amp = $this->getQueryStringParamsSepatator();
 			$targetUrl .= '?' . str_replace('%2F', '/', http_build_query($this->requestGlobalGet, '', $amp));
 		}
+
 		$this->redirect($targetUrl, \MvcCore\IResponse::SEE_OTHER);
 		return FALSE;
 	}

@@ -186,6 +186,7 @@ trait Routing
 		// fix it by `$this->stricModeBySession` configuration:
 		if (
 			$this->stricModeBySession && 
+			!$this->adminRequest &&
 			(($this->isGet && $this->routeGetRequestsOnly) || !$this->routeGetRequestsOnly)
 		) {
 			// redirect back to `$this->mediaSiteVersion` by session

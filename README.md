@@ -34,13 +34,13 @@ composer require mvccore/ext-router-media
 ## 2. Features
 
 ### 2.1. Features - Routing
-- Router recognizes user device as three predefined versions - `full`, `tablet` or `mobile` - in first request by HTTP header `User-Agent` with third-party [`\Mobile_Detect`](https://github.com/serbanghita/Mobile-Detect) library.
+- Router works with requests with media site version prefix in URL address, prefixes are configurable.
+- Router recognizes user device as 3 predefined versions - `full`, `tablet` or `mobile` - in first request by HTTP header `User-Agent` with third-party [`\Mobile_Detect`](https://github.com/serbanghita/Mobile-Detect) library.
+- Router redirects the first request if necessary to URL address with better media prefix, where is more suitable content for recognized device.
 - Router stores recognized device version string in its own session namespace with configurable expiration (to not process `\Mobile_Detect` recognition in every request again).
-- Router redirects requests by configuration to different media site version in first request user device recognition by HTTP header.
-- Router redirects requests by configuration to different media site version in strict session mode to version from session.
-- Router completes `$request->GetMediaSiteVersion()` value to use it anywhere in your app as strings: `full`, `tablet` or `mobile`.
 - Router replaces possibly founded media prefix substring in request path (`$request->GetPath()`) with an empty string. It keeps request path every time in the same form to process routing as usual.
-- Strict mode media site version configuration option to drive application media version strictly by session value.
+- Router completes `$request->GetMediaSiteVersion()` value to use it anywhere in your app as strings: `full`, `tablet` or `mobile`.
+- Session strict mode for media site version (configurable) to drive application media version strictly by session value.
 
 [go to top](#user-content-outline)
 

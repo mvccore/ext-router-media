@@ -78,15 +78,7 @@ implements	\MvcCore\Ext\Routers\IMedia,
 		} else {
 			$this->routeByRewriteRoutes($requestCtrlName, $requestActionName);
 		}
-		if ($this->currentRoute === NULL && (
-			($request->GetPath() == '/' || $request->GetPath() == $request->GetScriptName()) ||
-			$this->routeToDefaultIfNotMatch
-		)) {
-			list($dfltCtrl, $dftlAction) = $this->application->GetDefaultControllerAndActionNames();
-			$this->SetOrCreateDefaultRouteAsCurrent(
-				\MvcCore\IRouter::DEFAULT_ROUTE_NAME, $dfltCtrl, $dftlAction
-			);
-		}
-		return $this->currentRoute instanceof \MvcCore\IRoute;
+		$this->routeSetUpDefaultForHomeIfNoMatch();
+		return $this->routeSetUpSelfRouteName();
 	}
 }

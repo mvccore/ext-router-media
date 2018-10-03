@@ -78,7 +78,7 @@ interface IMedia
 	 *		'full'		=> '',	// to have nothing extra in url for full site version.
 	 * ];
 	 * ```
-	 * @return \MvcCore\Ext\Routers\Media|\MvcCore\Ext\Routers\IMedia
+	 * @return array
 	 */
 	public function & GetAllowedSiteKeysAndUrlPrefixes ();
 

@@ -62,6 +62,7 @@ trait Routing
 
 		// set up stored/detected media site version into request:
 		$this->request->SetMediaSiteVersion($this->mediaSiteVersion);
+		$this->session->{static::MEDIA_VERSION_URL_PARAM} = $this->mediaSiteVersion;
 		
 		return TRUE;
 	}
@@ -194,11 +195,21 @@ trait Routing
 		} else if ($this->firstRequestMediaDetection === FALSE) {
 			// redirect only if detected version is different than requested version
 			$targetMediaSiteVersion = $this->mediaSiteVersion;
-			$this->mediaSiteVersion = $targetMediaSiteVersion;
 		} else {
-			// redirect to requested version by `$this->requestMediaSiteVersion`:
-			$targetMediaSiteVersion = $this->requestMediaSiteVersion;
-			$this->mediaSiteVersion = $targetMediaSiteVersion;
+			if (
+				$this->routeGetRequestsOnly && 
+				$this->request->GetMethod() !== \MvcCore\IRequest::METHOD_GET &&
+				$this->requestMediaSiteVersion !== $this->sessionMediaSiteVersion
+			) {
+				// redirect to session version by `$this->requestMediaSiteVersion`:
+				$targetMediaSiteVersion = $this->sessionMediaSiteVersion;
+				$this->mediaSiteVersion = $targetMediaSiteVersion;
+				$this->requestMediaSiteVersion = $targetMediaSiteVersion;
+			} else {
+				// redirect to requested version by `$this->requestMediaSiteVersion`:
+				$targetMediaSiteVersion = $this->requestMediaSiteVersion;
+				$this->mediaSiteVersion = $targetMediaSiteVersion;
+			}
 		}
 		if ($targetMediaSiteVersion === $this->requestMediaSiteVersion) return TRUE;
 		// store target media site version in locale context and session and redirect

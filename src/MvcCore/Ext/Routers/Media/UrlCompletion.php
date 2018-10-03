@@ -55,7 +55,9 @@ trait UrlCompletion
 		if ($this->stricModeBySession && $mediaSiteVersion !== $this->mediaSiteVersion) 
 			$params[static::SWITCH_MEDIA_VERSION_URL_PARAM] = $mediaSiteVersion;
 
-		if (isset($this->allowedSiteKeysAndUrlPrefixes[$mediaSiteVersion])) {
+		if ($route->GetMethod() !== \MvcCore\IRequest::METHOD_GET && $this->routeGetRequestsOnly) {
+			$mediaSiteUrlPrefix = '';
+		} else if (isset($this->allowedSiteKeysAndUrlPrefixes[$mediaSiteVersion])) {
 			$mediaSiteUrlPrefix = $this->allowedSiteKeysAndUrlPrefixes[$mediaSiteVersion];
 		} else {
 			$mediaSiteUrlPrefix = '';
@@ -69,7 +71,6 @@ trait UrlCompletion
 		$result = $route->Url(
 			$params, $requestedUrlParams, $this->getQueryStringParamsSepatator()
 		);
-
 
 		return $this->request->GetBasePath() 
 			. $mediaSiteUrlPrefix 

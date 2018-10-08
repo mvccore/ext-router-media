@@ -34,20 +34,32 @@ trait UrlCompletion
 	 *		`/application/base-path/m/products-list/cool-product-name/blue?variant[]=L&amp;variant[]=XL"`
 	 * @param \MvcCore\Route|\MvcCore\IRoute &$route
 	 * @param array $params
+	 * @param string $givenRouteName
 	 * @return string
 	 */
-	public function UrlByRoute (\MvcCore\IRoute & $route, & $params = []) {
+	public function UrlByRoute (\MvcCore\IRoute & $route, & $params = [], $givenRouteName = 'self') {
 		/** @var $route \MvcCore\Route */
-		$requestedUrlParams = $this->GetRequestedUrlParams();
-		
+		$defaultParams = $this->GetDefaultParams();
+		if ($givenRouteName == 'self') {
+			$newParams = [];
+			foreach ($route->GetReverseParams() as $paramName) {
+				$newParams[$paramName] = isset($params[$paramName])
+					? $params[$paramName]
+					: $defaultParams[$paramName];
+			}
+			if (isset($params[$mediaVersionUrlParam])) {
+				$newParams[$mediaVersionUrlParam] = $params[$mediaVersionUrlParam];
+			$params = $newParams;
+			unset($params['controller'], $params['action']);
+		}
 		$mediaVersionUrlParam = static::MEDIA_VERSION_URL_PARAM;
 		
 		if (isset($params[$mediaVersionUrlParam])) {
 			$mediaSiteVersion = $params[$mediaVersionUrlParam];
 			unset($params[$mediaVersionUrlParam]);
-		} else if (isset($requestedUrlParams[$mediaVersionUrlParam])) {
-			$mediaSiteVersion = $requestedUrlParams[$mediaVersionUrlParam];
-			unset($requestedUrlParams[$mediaVersionUrlParam]);
+		} else if (isset($defaultParams[$mediaVersionUrlParam])) {
+			$mediaSiteVersion = $defaultParams[$mediaVersionUrlParam];
+			unset($defaultParams[$mediaVersionUrlParam]);
 		} else {
 			$mediaSiteVersion = $this->mediaSiteVersion;
 		}
@@ -69,7 +81,7 @@ trait UrlCompletion
 			);
 		
 		$result = $route->Url(
-			$params, $requestedUrlParams, $this->getQueryStringParamsSepatator()
+			$params, $defaultParams, $this->getQueryStringParamsSepatator()
 		);
 
 		return $this->request->GetBasePath() 

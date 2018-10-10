@@ -37,21 +37,12 @@ trait UrlCompletion
 	 * @param string $givenRouteName
 	 * @return string
 	 */
-	public function UrlByRoute (\MvcCore\IRoute & $route, & $params = [], $givenRouteName = 'self') {
+	public function UrlByRoute (\MvcCore\IRoute & $route, array & $params = [], $givenRouteName = NULL) {
 		/** @var $route \MvcCore\Route */
-		$defaultParams = $this->GetDefaultParams();
-		if ($givenRouteName == 'self') {
-			$newParams = [];
-			foreach ($route->GetReverseParams() as $paramName) {
-				$newParams[$paramName] = isset($params[$paramName])
-					? $params[$paramName]
-					: $defaultParams[$paramName];
-			}
-			if (isset($params[$mediaVersionUrlParam])) {
-				$newParams[$mediaVersionUrlParam] = $params[$mediaVersionUrlParam];
-			$params = $newParams;
-			unset($params['controller'], $params['action']);
-		}
+		$defaultParams = array_merge([], $this->defaultParams());
+		if ($givenRouteName == 'self') 
+			$params = array_merge($this->requestedParams, $params);
+
 		$mediaVersionUrlParam = static::MEDIA_VERSION_URL_PARAM;
 		
 		if (isset($params[$mediaVersionUrlParam])) {
@@ -67,7 +58,7 @@ trait UrlCompletion
 		if ($this->stricModeBySession && $mediaSiteVersion !== $this->mediaSiteVersion) 
 			$params[static::SWITCH_MEDIA_VERSION_URL_PARAM] = $mediaSiteVersion;
 
-		if ($route->GetMethod() !== \MvcCore\IRequest::METHOD_GET && $this->routeGetRequestsOnly) {
+		if ($this->routeGetRequestsOnly && $route->GetMethod() !== \MvcCore\IRequest::METHOD_GET) {
 			$mediaSiteUrlPrefix = '';
 		} else if (isset($this->allowedSiteKeysAndUrlPrefixes[$mediaSiteVersion])) {
 			$mediaSiteUrlPrefix = $this->allowedSiteKeysAndUrlPrefixes[$mediaSiteVersion];
@@ -80,12 +71,24 @@ trait UrlCompletion
 				E_USER_ERROR
 			);
 		
-		$result = $route->Url(
-			$params, $defaultParams, $this->getQueryStringParamsSepatator()
+		list($resultBase, $resultPathWithQuery) = $route->Url(
+			$this->request, $params, $this->GetDefaultParams(), $this->getQueryStringParamsSepatator()
 		);
 
-		return $this->request->GetBasePath() 
+		$questionMarkPos = mb_strpos($resultPathWithQuery, '?');
+		$resultPath = $questionMarkPos !== FALSE 
+			? mb_substr($resultPathWithQuery, 0, $questionMarkPos)
+			: $resultPathWithQuery;
+		$resultPathTrimmed = trim($resultPath, '/');
+		
+		if (
+			$resultPathTrimmed === '' &&
+			$this->trailingSlashBehaviour === \MvcCore\IRouter::TRAILING_SLASH_REMOVE &&
+			$mediaSiteUrlPrefix !== ''
+		) $resultPathWithQuery = ltrim($resultPathWithQuery, '/');
+
+		return $resultBase
 			. $mediaSiteUrlPrefix 
-			. $result;
+			. $resultPathWithQuery;
 	}
 }

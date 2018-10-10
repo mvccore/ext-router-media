@@ -122,7 +122,7 @@ interface IMedia
 	 * @param string $givenRouteName
 	 * @return string
 	 */
-	public function UrlByRoute (\MvcCore\IRoute & $route, & $params = [], $givenRouteName = 'self');
+	public function UrlByRoute (\MvcCore\IRoute & $route, array & $params = [], $givenRouteName = NULL);
 
 	/**
 	 * Route current application request by configured routes list or by query string data.

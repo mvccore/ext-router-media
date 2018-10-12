@@ -24,7 +24,7 @@ trait Redirecting
 	protected function redirectToTargetMediaSiteVersion ($targetMediaSiteVersion) {
 		// unset site key switch param and redirect to no switch param uri version
 		$request = & $this->request;
-		$mediaVersionUrlParam = static::MEDIA_VERSION_URL_PARAM;
+		$mediaVersionUrlParam = static::URL_PARAM_MEDIA_VERSION;
 		$targetMediaSameAsDefault = $targetMediaSiteVersion === static::MEDIA_VERSION_FULL;
 
 		if (isset($this->requestGlobalGet[$mediaVersionUrlParam])) {

@@ -46,10 +46,10 @@ interface IMedia
 	 * then your url will be created into different media website version.
 	 * Example:
 	 * `$this->Url('route_name', ['media_version' => 'mobile']);`
-	 * `$this->Url('route_name', [\MvcCore\Ext\Routes\IMedia::MEDIA_VERSION_URL_PARAM => 'mobile']);`.
+	 * `$this->Url('route_name', [\MvcCore\Ext\Routes\IMedia::URL_PARAM_MEDIA_VERSION => 'mobile']);`.
 	 * @var string
 	 */
-	const MEDIA_VERSION_URL_PARAM = 'media_version';
+	const URL_PARAM_MEDIA_VERSION = 'media_version';
 
 	/**
 	 * Special `$_GET` param name for session strict mode.
@@ -62,7 +62,7 @@ interface IMedia
 	 * mode is added automaticly.
 	 * @var string
 	 */
-	const SWITCH_MEDIA_VERSION_URL_PARAM = 'switch_media_version';
+	const URL_PARAM_SWITCH_MEDIA_VERSION = 'switch_media_version';
 	
 
 	/**

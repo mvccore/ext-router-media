@@ -43,7 +43,7 @@ trait UrlCompletion
 		if ($givenRouteName == 'self') 
 			$params = array_merge($this->requestedParams, $params);
 
-		$mediaVersionUrlParam = static::MEDIA_VERSION_URL_PARAM;
+		$mediaVersionUrlParam = static::URL_PARAM_MEDIA_VERSION;
 		
 		if (isset($params[$mediaVersionUrlParam])) {
 			$mediaSiteVersion = $params[$mediaVersionUrlParam];
@@ -56,7 +56,7 @@ trait UrlCompletion
 		}
 
 		if ($this->stricModeBySession && $mediaSiteVersion !== $this->mediaSiteVersion) 
-			$params[static::SWITCH_MEDIA_VERSION_URL_PARAM] = $mediaSiteVersion;
+			$params[static::URL_PARAM_SWITCH_MEDIA_VERSION] = $mediaSiteVersion;
 
 		if ($this->routeGetRequestsOnly && $route->GetMethod() !== \MvcCore\IRequest::METHOD_GET) {
 			$mediaSiteUrlPrefix = '';

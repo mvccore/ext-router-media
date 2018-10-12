@@ -62,7 +62,7 @@ trait Routing
 
 		// set up stored/detected media site version into request:
 		$this->request->SetMediaSiteVersion($this->mediaSiteVersion);
-		$this->session->{static::MEDIA_VERSION_URL_PARAM} = $this->mediaSiteVersion;
+		$this->session->{static::URL_PARAM_MEDIA_VERSION} = $this->mediaSiteVersion;
 		
 		return TRUE;
 	}
@@ -73,12 +73,12 @@ trait Routing
 	 * - prepare media site version from session initialized by any previous request
 	 * - detect if there is any special media site switching parameter in 
 	 *   request object global array `$_GET` with name by 
-	 *   `static::SWITCH_MEDIA_VERSION_URL_PARAM`
+	 *   `static::URL_PARAM_SWITCH_MEDIA_VERSION`
 	 * @return bool
 	 */
 	protected function preRoutePrepareMedia () {
 		//if ($this->stricModeBySession) { // check it with any strict session configuration to have more flexible navigations
-			$sessStrictModeSwitchUrlParam = static::SWITCH_MEDIA_VERSION_URL_PARAM;
+			$sessStrictModeSwitchUrlParam = static::URL_PARAM_SWITCH_MEDIA_VERSION;
 			if (isset($this->requestGlobalGet[$sessStrictModeSwitchUrlParam])) {
 				$switchUriParamMediaSiteVersion = strtolower($this->requestGlobalGet[$sessStrictModeSwitchUrlParam]);
 				if (isset($this->allowedSiteKeysAndUrlPrefixes[$switchUriParamMediaSiteVersion]))
@@ -87,7 +87,7 @@ trait Routing
 		//}
 		
 		// look into session object if there are or not any record about recognized device from previous request:
-		$mediaVersionUrlParam = static::MEDIA_VERSION_URL_PARAM;
+		$mediaVersionUrlParam = static::URL_PARAM_MEDIA_VERSION;
 		if (isset($this->session->{$mediaVersionUrlParam})) {
 			$sessionMediaSiteVersion = $this->session->{$mediaVersionUrlParam};
 			if (isset($this->allowedSiteKeysAndUrlPrefixes[$sessionMediaSiteVersion]))
@@ -109,7 +109,7 @@ trait Routing
 	 * @return void
 	 */
 	protected function setUpRequestMediaVersionFromUrl () {
-		$requestMediaVersion = $this->request->GetParam(static::MEDIA_VERSION_URL_PARAM, 'a-zA-Z');
+		$requestMediaVersion = $this->request->GetParam(static::URL_PARAM_MEDIA_VERSION, 'a-zA-Z');
 		$requestMediaVersionValidStr = $requestMediaVersion && strlen($requestMediaVersion) > 0;
 		if ($requestMediaVersionValidStr) 
 			$requestMediaVersion = strtolower($requestMediaVersion);
@@ -140,7 +140,7 @@ trait Routing
 	 */
 	protected function manageMediaSwitchingAndRedirect () {
 		// unset site key switch param
-		unset($this->requestGlobalGet[static::SWITCH_MEDIA_VERSION_URL_PARAM]);
+		unset($this->requestGlobalGet[static::URL_PARAM_SWITCH_MEDIA_VERSION]);
 		// redirect to no switch param uri version
 		return $this->redirectToTargetMediaSiteVersion(
 			$this->setUpMediaSiteVersionToContextAndSession($this->switchUriParamMediaSiteVersion)
@@ -168,7 +168,7 @@ trait Routing
 		} else {
 			$this->mediaSiteVersion = Routers\IMedia::MEDIA_VERSION_FULL;
 		}
-		$mediaVersionUrlParam = static::MEDIA_VERSION_URL_PARAM;
+		$mediaVersionUrlParam = static::URL_PARAM_MEDIA_VERSION;
 		$this->session->{$mediaVersionUrlParam} = $this->mediaSiteVersion;
 		$this->firstRequestMediaDetection = $this->mediaSiteVersion === $this->requestMediaSiteVersion;
 	}
@@ -224,7 +224,7 @@ trait Routing
 	 * @return string
 	 */
 	protected function setUpMediaSiteVersionToContextAndSession ($targetMediaSiteVersion) {
-		$this->session->{static::MEDIA_VERSION_URL_PARAM} = $targetMediaSiteVersion;
+		$this->session->{static::URL_PARAM_MEDIA_VERSION} = $targetMediaSiteVersion;
 		$this->mediaSiteVersion = $targetMediaSiteVersion;
 		return $targetMediaSiteVersion;
 	}

@@ -34,13 +34,13 @@ trait UrlCompletion
 	 *		`/application/base-path/m/products-list/cool-product-name/blue?variant[]=L&amp;variant[]=XL"`
 	 * @param \MvcCore\Route|\MvcCore\IRoute &$route
 	 * @param array $params
-	 * @param string $givenRouteName
+	 * @param string $urlParamRouteName
 	 * @return string
 	 */
-	public function UrlByRoute (\MvcCore\IRoute & $route, array & $params = [], $givenRouteName = NULL) {
+	protected function urlByRouteComponents (\MvcCore\IRoute & $route, array & $params = [], $urlParamRouteName = NULL) {
 		/** @var $route \MvcCore\Route */
 		$defaultParams = array_merge([], $this->defaultParams());
-		if ($givenRouteName == 'self') 
+		if ($urlParamRouteName == 'self') 
 			$params = array_merge($this->requestedParams, $params);
 
 		$mediaVersionUrlParam = static::URL_PARAM_MEDIA_VERSION;
@@ -87,8 +87,6 @@ trait UrlCompletion
 			$mediaSiteUrlPrefix !== ''
 		) $resultPathWithQuery = ltrim($resultPathWithQuery, '/');
 
-		return $resultBase
-			. $mediaSiteUrlPrefix 
-			. $resultPathWithQuery;
+		return [$resultBase, $mediaSiteUrlPrefix, $resultPathWithQuery];
 	}
 }

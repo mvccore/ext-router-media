@@ -65,18 +65,25 @@ implements	\MvcCore\Ext\Routers\IMedia,
 	 * @return bool
 	 */
 	public function Route () {
-		if (!$this->redirectToProperTrailingSlashIfNecessary()) return FALSE;
-		list($routeByQueryString, $requestCtrlName, $requestActionName) = $this->routeDetectStrategy();
+		$this->internalRequest = $this->request->IsInternalRequest();
+		if (!$this->internalRequest && !$this->routeByQueryString)
+			if (!$this->redirectToProperTrailingSlashIfNecessary()) return FALSE;
+		list($requestCtrlName, $requestActionName) = $this->routeDetectStrategy();
 		$this->anyRoutesConfigured = count($this->routes) > 0;
 		$this->preRoutePrepare();
-		if (!$this->preRoutePrepareMedia()) return FALSE;
-		if (!$this->preRouteMedia()) return FALSE;
-		if ($routeByQueryString) {
+		if (!$this->internalRequest) {
+			if (!$this->preRoutePrepareMedia()) return FALSE;
+			if (!$this->preRouteMedia()) return FALSE;
+		}
+		if ($this->routeByQueryString) {
 			$this->routeByControllerAndActionQueryString($requestCtrlName, $requestActionName);
 		} else {
 			$this->routeByRewriteRoutes($requestCtrlName, $requestActionName);
 		}
-		$this->routeSetUpDefaultForHomeIfNoMatch();
-		return $this->routeSetUpSelfRouteName();
+		if (!$this->routeProcessRouteRedirectionIfAny()) return FALSE;
+		return $this->routeSetUpDefaultForHomeIfNoMatch()
+					->routeSetUpSelfRouteNameIfAny()
+					->routeRedirect2CanonicalIfAny();
+					
 	}
 }

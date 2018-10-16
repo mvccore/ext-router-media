@@ -52,8 +52,10 @@ trait Redirecting
 
 		if ($this->requestGlobalGet) {
 			$amp = $this->getQueryStringParamsSepatator();
-			$targetUrl .= '?' . str_replace('%2F', '/', http_build_query($this->requestGlobalGet, '', $amp));
+			$targetUrl .= '?' . str_replace('%2F', '/', http_build_query($this->requestGlobalGet, '', $amp, PHP_QUERY_RFC3986));
 		}
+		
+		if ($this->request->GetFullUrl() === $targetUrl) return TRUE;
 
 		$this->redirect($targetUrl, \MvcCore\IResponse::SEE_OTHER);
 		return FALSE;

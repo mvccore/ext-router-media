@@ -133,7 +133,7 @@ trait PropsGettersSetters
 	 ************************************************************************************/
 
 	// TODO: provizorní
-	protected function redirectMediaGetPrefixAndUnsetGet ($targetMediaSiteVersion) {
+	protected function redirectMediaGetUrlValueAndUnsetGet ($targetMediaSiteVersion) {
 		$mediaVersionUrlParam = static::URL_PARAM_MEDIA_VERSION;
 		if (isset($this->requestGlobalGet[$mediaVersionUrlParam])) {
 			if ($targetMediaSiteVersion === static::MEDIA_VERSION_FULL) {

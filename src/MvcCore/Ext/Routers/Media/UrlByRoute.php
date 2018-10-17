@@ -44,8 +44,8 @@ trait UrlByRoute
 		// get domain with base path url section, 
 		// path with query string url section 
 		// and system params for url prefixes
-		list($urlBaseSection, $urlPathWithQuerySection, $systemParams) = $route->urlByRouteSections(
-			$params, $urlParamRouteName
+		list($urlBaseSection, $urlPathWithQuerySection, $systemParams) = $this->urlByRouteSections(
+			$route, $params, $urlParamRouteName
 		);
 
 		// create prefixed url

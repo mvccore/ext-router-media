@@ -29,14 +29,19 @@ trait RedirectSections
 
 		// unset site key switch param and redirect to no switch param uri version
 		$mediaVersionParamName = static::URL_PARAM_MEDIA_VERSION;
-		$targetMediaUrlValue = $this->redirectMediaGetPrefixAndUnsetGet(
+		$targetMediaUrlValue = $this->redirectMediaGetUrlValueAndUnsetGet(
 			$systemParams[$mediaVersionParamName]
 		);
 		
 		$urlPathWithQueryIsHome = NULL;
 		if ($this->anyRoutesConfigured) {
-			if ($targetMediaUrlValue === NULL) 
+
+			if ($targetMediaUrlValue === NULL) {
 				unset($systemParams[$mediaVersionParamName]);
+			} else {
+				$systemParams[$mediaVersionParamName] = $targetMediaUrlValue;
+			}
+
 			$this->redirectAddAllRemainingInGlobalGet($urlPathWithQuerySection);
 		} else {
 			$this->removeDefaultCtrlActionFromGlobalGet();

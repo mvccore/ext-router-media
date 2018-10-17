@@ -41,6 +41,16 @@ trait UrlByRoute
 	 * @return string
 	 */
 	public function UrlByRoute (\MvcCore\IRoute & $route, array & $params = [], $urlParamRouteName = NULL) {
-		return implode('', $this->urlByRouteSections($route, $params, $urlParamRouteName));
+		// get domain with base path url section, 
+		// path with query string url section 
+		// and system params for url prefixes
+		list($urlBaseSection, $urlPathWithQuerySection, $systemParams) = $route->urlByRouteSections(
+			$params, $urlParamRouteName
+		);
+
+		// create prefixed url
+		return $this->urlByRoutePrefixSystemParams(
+			$urlBaseSection, $urlPathWithQuerySection, $systemParams
+		);
 	}
 }

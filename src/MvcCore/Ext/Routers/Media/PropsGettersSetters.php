@@ -141,7 +141,7 @@ trait PropsGettersSetters
 			} else {
 				$this->requestGlobalGet[$mediaVersionUrlParam] = $targetMediaSiteVersion;
 			}
-			$targetMediaUrlValue = '';
+			$targetMediaUrlValue = NULL;
 		} else {
 			$targetMediaUrlValue = $this->allowedSiteKeysAndUrlValues[$targetMediaSiteVersion];
 		}

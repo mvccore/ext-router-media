@@ -35,7 +35,7 @@ trait UrlByRouteSections
 	 * @param \MvcCore\Route|\MvcCore\IRoute &$route
 	 * @param array $params
 	 * @param string $urlParamRouteName
-	 * @return string
+	 * @return array `string $urlBaseSection, string $urlPathWithQuerySection, array $systemParams`
 	 */
 	protected function urlByRouteSections (\MvcCore\IRoute & $route, array & $params = [], $urlParamRouteName = NULL) {
 		/** @var $route \MvcCore\Route */
@@ -54,17 +54,15 @@ trait UrlByRouteSections
 		} else {
 			$mediaSiteVersion = $this->mediaSiteVersion;
 		}
-		// add special switching param to global get, if strict session mode and target version is different
-		if ($this->stricModeBySession && $mediaSiteVersion !== $this->mediaSiteVersion) 
-			$params[static::URL_PARAM_SWITCH_MEDIA_VERSION] = $mediaSiteVersion;
 
 		// get url version value from application value (only for allowed request types)
-		if ($this->routeGetRequestsOnly && $route->GetMethod() !== \MvcCore\IRequest::METHOD_GET) {
-			$mediaSiteUrlValue = '';
+		$routeMethod = $route->GetMethod();
+		if ($this->routeGetRequestsOnly && $routeMethod !== NULL && $routeMethod !== \MvcCore\IRequest::METHOD_GET) {
+			$mediaSiteUrlValue = NULL;
 		} else if (isset($this->allowedSiteKeysAndUrlValues[$mediaSiteVersion])) {
 			$mediaSiteUrlValue = $this->allowedSiteKeysAndUrlValues[$mediaSiteVersion];
 		} else {
-			$mediaSiteUrlValue = '';
+			$mediaSiteUrlValue = NULL;
 			trigger_error(
 				'['.__CLASS__.'] Not allowed media site version used to generate url: `'
 				.$mediaSiteVersion.'`. Allowed values: `'
@@ -72,34 +70,23 @@ trait UrlByRouteSections
 				E_USER_ERROR
 			);
 		}
+
+		// add special switching param to global get, if strict session mode and target version is different
+		if ($this->stricModeBySession && $mediaSiteVersion !== NULL && $mediaSiteVersion !== $this->mediaSiteVersion) 
+			$params[static::URL_PARAM_SWITCH_MEDIA_VERSION] = $mediaSiteVersion;
 		
 		// complete by given route base url address part and part with path and query string
-		list($resultBase, $resultPathWithQuery) = $route->Url(
+		list($urlBaseSection, $urlPathWithQuerySection) = $route->Url(
 			$this->request, $params, $this->GetDefaultParams(), $this->getQueryStringParamsSepatator()
 		);
 		
-		// finalizing possible trailing slash after prefix
-		if (
-			// if trailing slash is not allowed
-			$this->trailingSlashBehaviour === \MvcCore\IRouter::TRAILING_SLASH_REMOVE &&
-			// if there is not full (empty) media prefix:
-			$mediaSiteUrlValue !== ''
-		) {
-			$questionMarkPos = mb_strpos($resultPathWithQuery, '?');
-			$resultPath = $questionMarkPos !== FALSE 
-				? mb_substr($resultPathWithQuery, 0, $questionMarkPos)
-				: $resultPathWithQuery;
-			// if url targets homepage:
-			if (trim($resultPath, '/') === '') 
-				// trim result path and query url part from left like this:
-				// `/?any=query&string=content`	=> `?any=query&string=content`
-				// to complete address with prefix for mobiles without trailing slash like this:
-				// `/m/?any=query&string=content`	=> `/m?any=query&string=content`
-				$resultPathWithQuery = ltrim($resultPathWithQuery, '/');
-		}
-		
-		$mediaSiteUrlPrefix = $mediaSiteUrlValue === '' ? '' : '/' . $mediaSiteUrlValue ;
+		$systemParams = [];
+		if ($mediaSiteUrlValue !== NULL) $systemParams[$mediaVersionUrlParam] = $mediaSiteUrlValue;
 
-		return [$resultBase, $mediaSiteUrlPrefix, $resultPathWithQuery];
+		return [
+			$urlBaseSection, 
+			$urlPathWithQuerySection, 
+			$systemParams
+		];
 	}
 }

@@ -18,28 +18,17 @@ trait Redirecting
 	/**
 	 * Redirect to target media site version with path and by cloned request 
 	 * object global `$_GET` collection. Return always `FALSE`.
-	 * @param string $targetMediaSiteVersion 
+	 * @param array $targetSystemParams 
 	 * @return bool
 	 */
-	protected function redirectToTargetMediaSiteVersion ($targetMediaSiteVersion) {
+	protected function redirectToVersion ($targetSystemParams) {
 		// unset site key switch param and redirect to no switch param uri version
+		$targetMediaSiteVersion = $targetSystemParams[\MvcCore\Ext\Routers\IMedia::URL_PARAM_MEDIA_VERSION];
+		$targetMediaUrlValue = $this->redirectMediaGetPrefixAndUnsetGet($targetMediaSiteVersion);
+		
 		$request = & $this->request;
-		$mediaVersionUrlParam = static::URL_PARAM_MEDIA_VERSION;
-		$targetMediaSameAsDefault = $targetMediaSiteVersion === static::MEDIA_VERSION_FULL;
-
-		if (isset($this->requestGlobalGet[$mediaVersionUrlParam])) {
-			if ($targetMediaSameAsDefault) {
-				if (isset($this->requestGlobalGet[$mediaVersionUrlParam]))
-					unset($this->requestGlobalGet[$mediaVersionUrlParam]);
-			} else {
-				$this->requestGlobalGet[$mediaVersionUrlParam] = $targetMediaSiteVersion;
-			}
-			$targetMediaPrefix = '';
-		} else {
-			$targetMediaPrefix = $this->allowedSiteKeysAndUrlPrefixes[$targetMediaSiteVersion];
-		}
-
 		if ($this->anyRoutesConfigured) {
+			$targetMediaPrefix = $targetMediaUrlValue === '' ? '' : '/' . $targetMediaUrlValue;
 			$targetUrl = $request->GetBaseUrl()
 				. $targetMediaPrefix
 				. $request->GetPath(TRUE);

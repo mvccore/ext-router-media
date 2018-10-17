@@ -74,13 +74,13 @@ interface IMedia
 	 * Example: 
 	 * ```
 	 * [
-	 *		'mobile'	=> '/m',// to have `/m` substring in every mobile url begin.
+	 *		'mobile'	=> 'm', // to have `/m` substring in every mobile url begin.
 	 *		'full'		=> '',	// to have nothing extra in url for full site version.
 	 * ];
 	 * ```
 	 * @return array
 	 */
-	public function & GetAllowedSiteKeysAndUrlPrefixes ();
+	public function & GetAllowedSiteKeysAndUrlValues ();
 
 	/**
 	 * Set url prefixes prepended before request url path to describe media site version in url.
@@ -90,13 +90,13 @@ interface IMedia
 	 * If you do not want to use rewrite routes, just put under your alowed keys any values.
 	 * Example: 
 	 * ```
-	 * \MvcCore\Ext\Routers\Media::GetInstance()->SetAllowedSiteKeysAndUrlPrefixes([
-	 *		'mobile'	=> '/m',// to have `/m` substring in every mobile url begin.
+	 * \MvcCore\Ext\Routers\Media::GetInstance()->SetAllowedSiteKeysAndUrlValues([
+	 *		'mobile'	=> 'm', // to have `/m` substring in every mobile url begin.
 	 *		'full'		=> '',	// to have nothing extra in url for full site version.
 	 * ]);
 	 * ```
-	 * @param array $allowedSiteKeysAndUrlPrefixes
+	 * @param array $allowedSiteKeysAndUrlValues
 	 * @return \MvcCore\Ext\Routers\IMedia
 	 */
-	public function & SetAllowedSiteKeysAndUrlPrefixes ($allowedSiteKeysAndUrlPrefixes = []);
+	public function & SetAllowedSiteKeysAndUrlValues ($allowedSiteKeysAndUrlValues = []);
 }

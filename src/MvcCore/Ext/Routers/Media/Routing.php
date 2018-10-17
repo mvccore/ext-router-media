@@ -36,7 +36,7 @@ trait Routing
 	 *   founded, complete `\MvcCore\Router::$currentRoute` with new empty automaticly created route
 	 *   targeting default controller and action by configuration in application instance (`Index:Index`)
 	 *   and route type create by configured `\MvcCore\Application::$routeClass` class name.
-	 * - Return `TRUE` if `\MvcCore\Router::$currentRoute` is route instance or `FALSE` for redirection.
+	 * - Return `TRUE` if routing has no redirection or `FALSE` for redirection.
 	 *
 	 * This method is always called from core routing by:
 	 * - `\MvcCore\Application::Run();` => `\MvcCore\Application::routeRequest();`.
@@ -48,9 +48,9 @@ trait Routing
 			if (!$this->redirectToProperTrailingSlashIfNecessary()) return FALSE;
 		list($requestCtrlName, $requestActionName) = $this->routeDetectStrategy();
 		$this->anyRoutesConfigured = count($this->routes) > 0;
-		$this->preRoutePrepare();
 		if (!$this->internalRequest) {
-			if (!$this->preRoutePrepareMedia()) return FALSE;
+			$this->prepare();
+			$this->prepareMedia();
 			if (!$this->preRouteMedia()) return FALSE;
 		}
 		if ($this->routeByQueryString) {

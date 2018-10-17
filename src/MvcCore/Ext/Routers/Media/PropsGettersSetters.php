@@ -29,9 +29,9 @@ trait PropsGettersSetters
 	 * If you do not want to use rewrite routes, just put under your alowed keys any values.
 	 * @var array
 	 */
-	protected $allowedSiteKeysAndUrlPrefixes = [
-		Routers\IMedia::MEDIA_VERSION_MOBILE	=> '/m',
-		Routers\IMedia::MEDIA_VERSION_TABLET	=> '/t',
+	protected $allowedSiteKeysAndUrlValues = [
+		Routers\IMedia::MEDIA_VERSION_MOBILE	=> 'm',
+		Routers\IMedia::MEDIA_VERSION_TABLET	=> 't',
 		Routers\IMedia::MEDIA_VERSION_FULL		=> '',
 	];
 
@@ -96,14 +96,14 @@ trait PropsGettersSetters
 	 * Example: 
 	 * ```
 	 * [
-	 *		'mobile'	=> '/m',// to have `/m` substring in every mobile url begin.
+	 *		'mobile'	=> 'm', // to have `/m` substring in every mobile url begin.
 	 *		'full'		=> '',	// to have nothing extra in url for full site version.
 	 * ];
 	 * ```
 	 * @return array
 	 */
-	public function & GetAllowedSiteKeysAndUrlPrefixes () {
-		return $this->allowedSiteKeysAndUrlPrefixes;
+	public function & GetAllowedSiteKeysAndUrlValues () {
+		return $this->allowedSiteKeysAndUrlValues;
 	}
 
 	/**
@@ -114,16 +114,37 @@ trait PropsGettersSetters
 	 * If you do not want to use rewrite routes, just put under your alowed keys any values.
 	 * Example: 
 	 * ```
-	 * \MvcCore\Ext\Routers\Media::GetInstance()->SetAllowedSiteKeysAndUrlPrefixes([
-	 *		'mobile'	=> '/m',// to have `/m` substring in every mobile url begin.
+	 * \MvcCore\Ext\Routers\Media::GetInstance()->SetAllowedSiteKeysAndUrlValues([
+	 *		'mobile'	=> 'm', // to have `/m` substring in every mobile url begin.
 	 *		'full'		=> '',	// to have nothing extra in url for full site version.
 	 * ]);
 	 * ```
-	 * @param array $allowedSiteKeysAndUrlPrefixes
+	 * @param array $allowedSiteKeysAndUrlValues
 	 * @return \MvcCore\Ext\Routers\Media|\MvcCore\Ext\Routers\IMedia
 	 */
-	public function & SetAllowedSiteKeysAndUrlPrefixes ($allowedSiteKeysAndUrlPrefixes = []) {
-		$this->allowedSiteKeysAndUrlPrefixes = $allowedSiteKeysAndUrlPrefixes;
+	public function & SetAllowedSiteKeysAndUrlValues ($allowedSiteKeysAndUrlValues = []) {
+		$this->allowedSiteKeysAndUrlValues = $allowedSiteKeysAndUrlValues;
 		return $this;
+	}
+	
+
+	/*************************************************************************************
+	 *                                  Protected Methods                                *
+	 ************************************************************************************/
+
+	// TODO: provizorní
+	protected function redirectMediaGetPrefixAndUnsetGet ($targetMediaSiteVersion) {
+		$mediaVersionUrlParam = static::URL_PARAM_MEDIA_VERSION;
+		if (isset($this->requestGlobalGet[$mediaVersionUrlParam])) {
+			if ($targetMediaSiteVersion === static::MEDIA_VERSION_FULL) {
+				unset($this->requestGlobalGet[$mediaVersionUrlParam]);
+			} else {
+				$this->requestGlobalGet[$mediaVersionUrlParam] = $targetMediaSiteVersion;
+			}
+			$targetMediaUrlValue = '';
+		} else {
+			$targetMediaUrlValue = $this->allowedSiteKeysAndUrlValues[$targetMediaSiteVersion];
+		}
+		return $targetMediaUrlValue;
 	}
 }

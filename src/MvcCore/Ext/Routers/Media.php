@@ -26,9 +26,11 @@ implements	\MvcCore\Ext\Routers\IMedia,
 {
 	use \MvcCore\Ext\Routers\Extended;
 	use \MvcCore\Ext\Routers\Media\PropsGettersSetters;
+	use \MvcCore\Ext\Routers\Media\Preparing;
 	use \MvcCore\Ext\Routers\Media\PreRouting;
 	use \MvcCore\Ext\Routers\Media\Redirecting;
-	use \MvcCore\Ext\Routers\Media\UrlCompletion;
+	use \MvcCore\Ext\Routers\Media\UrlByRouteSections;
+	use \MvcCore\Ext\Routers\Media\UrlByRoute;
 	use \MvcCore\Ext\Routers\Media\Routing;
 	
 	/**

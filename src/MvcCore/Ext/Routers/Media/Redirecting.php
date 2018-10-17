@@ -28,10 +28,20 @@ trait Redirecting
 		
 		$request = & $this->request;
 		if ($this->anyRoutesConfigured) {
+			$requestPath = $request->GetPath(TRUE);
+			$requestedPathIsHome = trim($requestPath, '/') === '' || $requestPath === $request->GetScriptName();
+
 			$targetMediaPrefix = $targetMediaUrlValue === '' ? '' : '/' . $targetMediaUrlValue;
+
+			if (
+				$requestedPathIsHome &&
+				$this->trailingSlashBehaviour === \MvcCore\IRouter::TRAILING_SLASH_REMOVE &&
+				$targetMediaPrefix !== ''
+			) $requestPath = '';
+
 			$targetUrl = $request->GetBaseUrl()
 				. $targetMediaPrefix
-				. $request->GetPath(TRUE);
+				. $requestPath;
 		} else {
 			$targetUrl = $request->GetBaseUrl();
 			$this->removeDefaultCtrlActionFromGlobalGet();

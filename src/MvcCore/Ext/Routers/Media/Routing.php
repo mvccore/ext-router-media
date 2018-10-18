@@ -53,9 +53,9 @@ trait Routing
 			if (!$this->preRouteMedia()) return FALSE;
 		}
 		if ($this->routeByQueryString) {
-			$this->routeByControllerAndActionQueryString($requestCtrlName, $requestActionName);
+			$this->queryStringRouting($requestCtrlName, $requestActionName);
 		} else {
-			$this->routeByRewriteRoutes($requestCtrlName, $requestActionName);
+			$this->rewriteRouting($requestCtrlName, $requestActionName);
 		}
 		if (!$this->routeProcessRouteRedirectionIfAny()) return FALSE;
 		return $this->routeSetUpDefaultForHomeIfNoMatch()

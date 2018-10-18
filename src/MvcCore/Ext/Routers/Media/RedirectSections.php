@@ -19,7 +19,7 @@ trait RedirectSections
 	 * Redirect to target localization version with path and by cloned request 
 	 * object global `$_GET` collection. Return always `FALSE`.
 	 * @param array $systemParams 
-	 * @return bool
+	 * @return array `string $urlBaseSection, string $urlPathWithQuerySection, array $systemParams, bool|NULL $urlPathWithQueryIsHome`
 	 */
 	protected function redirectToVersionSections ($systemParams) {
 		$request = & $this->request;

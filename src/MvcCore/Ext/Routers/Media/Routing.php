@@ -47,7 +47,6 @@ trait Routing
 		if (!$this->internalRequest && !$this->routeByQueryString)
 			if (!$this->redirectToProperTrailingSlashIfNecessary()) return FALSE;
 		list($requestCtrlName, $requestActionName) = $this->routeDetectStrategy();
-		$this->anyRoutesConfigured = count($this->routes) > 0;
 		if (!$this->internalRequest) {
 			$this->prepare();
 			$this->prepareMedia();

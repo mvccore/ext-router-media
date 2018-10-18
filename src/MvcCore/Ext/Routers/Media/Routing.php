@@ -60,7 +60,7 @@ trait Routing
 		if (!$this->routeProcessRouteRedirectionIfAny()) return FALSE;
 		return $this->routeSetUpDefaultForHomeIfNoMatch()
 					->routeSetUpSelfRouteNameIfAny()
-					->routeRedirect2CanonicalIfAny();
+					->canonicalRedirectIfAny();
 					
 	}
 }

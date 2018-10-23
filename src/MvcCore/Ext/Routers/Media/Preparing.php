@@ -25,6 +25,8 @@ trait Preparing
 	 * @return void
 	 */
 	protected function prepareMedia () {
+		//if ($this->mediaSiteVersion) return;
+
 		//if ($this->stricModeBySession) { // check it with any strict session configuration to have more flexible navigations
 			$sessStrictModeSwitchUrlParam = static::URL_PARAM_SWITCH_MEDIA_VERSION;
 			if (isset($this->requestGlobalGet[$sessStrictModeSwitchUrlParam])) {
@@ -55,25 +57,44 @@ trait Preparing
 	 * @return void
 	 */
 	protected function prepareRequestMediaVersionFromUrl () {
+		$this->prepareRequestMediaVersionFromUrlQueryString();
+		if ($this->requestMediaSiteVersion === NULL && $this->anyRoutesConfigured) 
+			$this->prepareRequestMediaVersionFromUrlPath();
+		if ($this->requestMediaSiteVersion === NULL) 
+			$this->requestMediaSiteVersion = static::MEDIA_VERSION_FULL;
+	}
+
+	/**
+	 * Try to set up media site version from request query string.
+	 * @return void
+	 */
+	protected function prepareRequestMediaVersionFromUrlQueryString () {
 		$requestMediaVersion = $this->request->GetParam(static::URL_PARAM_MEDIA_VERSION, 'a-zA-Z');
 		$requestMediaVersionValidStr = $requestMediaVersion && strlen($requestMediaVersion) > 0;
 		if ($requestMediaVersionValidStr) 
 			$requestMediaVersion = strtolower($requestMediaVersion);
 		if ($requestMediaVersionValidStr && isset($this->allowedSiteKeysAndUrlValues[$requestMediaVersion])) 
 			$this->requestMediaSiteVersion = $requestMediaVersion;
-		if ($this->requestMediaSiteVersion === NULL && $this->anyRoutesConfigured) {
-			$requestPath = $this->request->GetPath(TRUE);
-			foreach ($this->allowedSiteKeysAndUrlValues as $mediaSiteVersion => $mediaSiteUrlValue) {
-				$mediaSiteUrlPrefix = $mediaSiteUrlValue === '' ? '' : '/' . $mediaSiteUrlValue ;
-				$requestPathPart = mb_substr($requestPath, 0, mb_strlen($mediaSiteUrlPrefix));
-				if ($requestPathPart === $mediaSiteUrlPrefix) {
-					$this->requestMediaSiteVersion = $mediaSiteVersion;
-					$this->request->SetPath(mb_substr($requestPath, mb_strlen($mediaSiteUrlPrefix)));
-					break;
-				}
+	}
+	
+	/**
+	 * Try to set up media site version from request path.
+	 * If there is any request path detected, remove media site version from 
+	 * request path and store detected media site version in local context.
+	 * @return void
+	 */
+	protected function prepareRequestMediaVersionFromUrlPath () {
+		$requestPath = $this->request->GetPath(TRUE);
+		foreach ($this->allowedSiteKeysAndUrlValues as $mediaSiteVersion => $mediaSiteUrlValue) {
+			$mediaSiteUrlPrefix = $mediaSiteUrlValue === '' ? '' : '/' . $mediaSiteUrlValue ;
+			$requestPathPart = mb_substr($requestPath, 0, mb_strlen($mediaSiteUrlPrefix));
+			if ($requestPathPart === $mediaSiteUrlPrefix) {
+				$this->requestMediaSiteVersion = $mediaSiteVersion;
+				$this->request->SetPath(
+					mb_substr($requestPath, mb_strlen($mediaSiteUrlPrefix))
+				);
+				break;
 			}
 		}
-		if ($this->requestMediaSiteVersion === NULL) 
-			$this->requestMediaSiteVersion = static::MEDIA_VERSION_FULL;
 	}
 }

@@ -35,29 +35,31 @@ trait PreRouting
 	 * @return bool
 	 */
 	protected function preRouteMedia () {
-		if (
-			(($this->isGet && $this->routeGetRequestsOnly) || !$this->routeGetRequestsOnly) &&
-			$this->switchUriParamMediaSiteVersion !== NULL
-		) {
-			// if there is detected in requested url media site version switching param,
-			// store switching param value in session, remove param from `$_GET` 
-			// and redirect to the same page with new media site version:
-			if (!$this->manageMediaSwitchingAndRedirect()) return FALSE;
+		if (!$this->mediaSiteVersion) {
+			if (
+				(($this->isGet && $this->routeGetRequestsOnly) || !$this->routeGetRequestsOnly) &&
+				$this->switchUriParamMediaSiteVersion !== NULL
+			) {
+				// if there is detected in requested url media site version switching param,
+				// store switching param value in session, remove param from `$_GET` 
+				// and redirect to the same page with new media site version:
+				if (!$this->manageMediaSwitchingAndRedirect()) return FALSE;
 
-		} else if (
-			(($this->isGet && $this->routeGetRequestsOnly) || !$this->routeGetRequestsOnly) && 
-			$this->sessionMediaSiteVersion === NULL
-		) {
-			// if there is no session record about media site version:
-			$this->manageMediaDetectionAndStoreInSession();
-			// check if media site version is the same as local media site version:
-			if (!$this->checkMediaVersionWithUrlAndRedirectIfNecessary()) return FALSE;
+			} else if (
+				(($this->isGet && $this->routeGetRequestsOnly) || !$this->routeGetRequestsOnly) && 
+				$this->sessionMediaSiteVersion === NULL
+			) {
+				// if there is no session record about media site version:
+				$this->manageMediaDetectionAndStoreInSession();
+				// check if media site version is the same as local media site version:
+				if (!$this->checkMediaVersionWithUrlAndRedirectIfNecessary()) return FALSE;
 
-		} else {
-			// if there is media site version in session already:
-			$this->mediaSiteVersion = $this->sessionMediaSiteVersion;
-			// check if media site version is the same as local media site version:
-			if (!$this->checkMediaVersionWithUrlAndRedirectIfNecessary()) return FALSE;
+			} else {
+				// if there is media site version in session already:
+				$this->mediaSiteVersion = $this->sessionMediaSiteVersion;
+				// check if media site version is the same as local media site version:
+				if (!$this->checkMediaVersionWithUrlAndRedirectIfNecessary()) return FALSE;
+			}
 		}
 
 		// set up stored/detected media site version into request:

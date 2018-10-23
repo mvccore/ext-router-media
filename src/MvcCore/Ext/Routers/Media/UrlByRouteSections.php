@@ -39,7 +39,7 @@ trait UrlByRouteSections
 	 */
 	protected function urlByRouteSections (\MvcCore\IRoute & $route, array & $params = [], $urlParamRouteName = NULL) {
 		/** @var $route \MvcCore\Route */
-		$defaultParams = array_merge([], $this->defaultParams());
+		$defaultParams = array_merge([], $this->defaultParams);
 		if ($urlParamRouteName == 'self') 
 			$params = array_merge($this->requestedParams, $params);
 

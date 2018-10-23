@@ -77,7 +77,11 @@ trait PreRouting
 	 */
 	protected function manageMediaSwitchingAndRedirect () {
 		// unset site key switch param
-		unset($this->requestGlobalGet[static::URL_PARAM_SWITCH_MEDIA_VERSION]);
+		$switchMediaVersionParamName = static::URL_PARAM_SWITCH_MEDIA_VERSION;
+		// it couldn't be there in module extended router, because this variable is 
+		// used by extended router to redirect non-valid values in 3rd level domains
+		if (isset($this->requestGlobalGet[$switchMediaVersionParamName]))
+			unset($this->requestGlobalGet[$switchMediaVersionParamName]);
 		// redirect to no switch param uri version
 		return $this->redirectToVersion(
 			$this->setUpMediaSiteVersionToContextAndSession($this->switchUriParamMediaSiteVersion)

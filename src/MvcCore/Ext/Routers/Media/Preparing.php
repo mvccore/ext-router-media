@@ -70,11 +70,7 @@ trait Preparing
 	 */
 	protected function prepareRequestMediaVersionFromUrlQueryString () {
 		$requestMediaVersion = $this->request->GetParam(static::URL_PARAM_MEDIA_VERSION, 'a-zA-Z');
-		$requestMediaVersionValidStr = $requestMediaVersion && strlen($requestMediaVersion) > 0;
-		if ($requestMediaVersionValidStr) 
-			$requestMediaVersion = strtolower($requestMediaVersion);
-		if ($requestMediaVersionValidStr && isset($this->allowedSiteKeysAndUrlValues[$requestMediaVersion])) 
-			$this->requestMediaSiteVersion = $requestMediaVersion;
+		$this->prepareSetUpRequestMediaSiteVersionIfValid($requestMediaVersion);
 	}
 	
 	/**
@@ -86,9 +82,10 @@ trait Preparing
 	protected function prepareRequestMediaVersionFromUrlPath () {
 		$requestPath = $this->request->GetPath(TRUE);
 		foreach ($this->allowedSiteKeysAndUrlValues as $mediaSiteVersion => $mediaSiteUrlValue) {
-			$mediaSiteUrlPrefix = $mediaSiteUrlValue === '' ? '' : '/' . $mediaSiteUrlValue ;
-			$requestPathPart = mb_substr($requestPath, 0, mb_strlen($mediaSiteUrlPrefix));
+			$mediaSiteUrlPrefix = $mediaSiteUrlValue === '' ? '' : '/' . mb_strtolower($mediaSiteUrlValue);
+			$requestPathPart = mb_strtolower(mb_substr($requestPath, 0, mb_strlen($mediaSiteUrlPrefix)));
 			if ($requestPathPart === $mediaSiteUrlPrefix) {
+				//$this->prepareSetUpRequestMediaSiteVersionIfValid($mediaSiteVersion);
 				$this->requestMediaSiteVersion = $mediaSiteVersion;
 				$this->request->SetPath(
 					mb_substr($requestPath, mb_strlen($mediaSiteUrlPrefix))
@@ -96,5 +93,30 @@ trait Preparing
 				break;
 			}
 		}
+	}
+
+	/**
+	 * @param string|NULL $rawRequestMediaVersion 
+	 * @return bool
+	 */
+	protected function prepareSetUpRequestMediaSiteVersionIfValid ($rawRequestMediaVersion) {
+		$result = FALSE;
+		$rawRequestMediaVersionLength = $rawRequestMediaVersion ? strlen($rawRequestMediaVersion) : 0;
+		$requestMediaVersionValidStr = $rawRequestMediaVersionLength > 0;
+		$requestMediaVersionFormated = '';
+		if ($requestMediaVersionValidStr) {
+			$requestMediaVersionFormated = mb_strtolower($rawRequestMediaVersion);
+			if (isset($this->allowedSiteKeysAndUrlValues[$requestMediaVersionFormated])) { 
+				$this->requestMediaSiteVersion = $requestMediaVersionFormated;
+				$result = TRUE;
+			} else {
+				$allowedSiteKey = array_search($requestMediaVersionFormated, array_values($this->allowedSiteKeysAndUrlValues), TRUE);
+				if ($allowedSiteKey !== FALSE) {
+					$this->requestMediaSiteVersion = $allowedSiteKey;
+					$result = TRUE;
+				}
+			}
+		}
+		return $result;
 	}
 }

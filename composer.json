@@ -1,7 +1,7 @@
 {
 	"name": "mvccore/ext-router-media",
 	"type": "library",
-	"description": "MvcCore - Extension - Router - Media - router to have media site version (full/tablet/mobile) flag in every GET url, very configurable.",
+	"description": "MvcCore - Extension - Router - Media - extension to manage website media versions (full/tablet/mobile) for different templates/CSS/JS files rendering, optionally contained in URL address in the beginning.",
 	"keywords": [
 		"mvc", 
 		"mvccore", 

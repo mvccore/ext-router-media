@@ -42,39 +42,14 @@ trait UrlByRouteSections
 		$defaultParams = array_merge([], $this->defaultParams);
 		if ($urlParamRouteName == 'self') 
 			$params = array_merge($this->requestedParams, $params);
-
-		// separate `$mediaSiteVersion` from `$params` to work with the version more specificly
-		$mediaVersionUrlParam = static::URL_PARAM_MEDIA_VERSION;
-		if (isset($params[$mediaVersionUrlParam])) {
-			$mediaSiteVersion = $params[$mediaVersionUrlParam];
-			unset($params[$mediaVersionUrlParam]);
-		} else if (isset($defaultParams[$mediaVersionUrlParam])) {
-			$mediaSiteVersion = $defaultParams[$mediaVersionUrlParam];
-			unset($defaultParams[$mediaVersionUrlParam]);
-		} else {
-			$mediaSiteVersion = $this->mediaSiteVersion;
-		}
-
-		// get url version value from application value (only for allowed request types)
 		$routeMethod = $route->GetMethod();
-		if ($this->routeGetRequestsOnly && $routeMethod !== NULL && $routeMethod !== \MvcCore\IRequest::METHOD_GET) {
-			$mediaSiteUrlValue = NULL;
-		} else if (isset($this->allowedSiteKeysAndUrlValues[$mediaSiteVersion])) {
-			$mediaSiteUrlValue = $this->allowedSiteKeysAndUrlValues[$mediaSiteVersion];
-		} else {
-			$mediaSiteUrlValue = NULL;
-			trigger_error(
-				'['.__CLASS__.'] Not allowed media site version used to generate url: `'
-				.$mediaSiteVersion.'`. Allowed values: `'
-				.implode('`, `', array_keys($this->allowedSiteKeysAndUrlValues)) . '`.',
-				E_USER_ERROR
-			);
-		}
 
-		// add special switching param to global get, if strict session mode and target version is different
-		if ($this->stricModeBySession && $mediaSiteVersion !== NULL && $mediaSiteVersion !== $this->mediaSiteVersion) 
-			$params[static::URL_PARAM_SWITCH_MEDIA_VERSION] = $mediaSiteVersion;
+
+		list($mediaVersionUrlParam, $mediaSiteUrlValue) = $this->urlByRouteSectionsMedia(
+			$route, $params, $defaultParams, $routeMethod
+		);
 		
+
 		// complete by given route base url address part and part with path and query string
 		list($urlBaseSection, $urlPathWithQuerySection) = $route->Url(
 			$this->request, $params, $this->GetDefaultParams(), $this->getQueryStringParamsSepatator()

@@ -113,7 +113,7 @@ There are configured three media site versions with URL address prefixes by defa
 ```php
 use \MvcCore\Ext\Routers;
 ...
-$router->SetAllowedSiteKeysAndUrlValues([
+$router->SetAllowedMediaVersionsAndUrlValues([
     Routers\Media::MEDIA_VERSION_MOBILE	=> 'm',
     Routers\Media::MEDIA_VERSION_TABLET	=> 't',
     Routers\Media::MEDIA_VERSION_FULL	=> '',
@@ -127,7 +127,7 @@ To allow only selected media site versions and to configure url prefixes, you ca
 use \MvcCore\Ext\Routers;
 ...
 // now, tablet version is not allowed:
-$router->SetAllowedSiteKeysAndUrlValues([
+$router->SetAllowedMediaVersionsAndUrlValues([
     Routers\Media::MEDIA_VERSION_MOBILE	=> 'mobile',
     // if you are using an empty string url prefix for full version, 
     // you need to define it as the last item!

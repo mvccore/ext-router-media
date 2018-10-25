@@ -97,12 +97,12 @@ trait PreRouting
 	protected function manageMediaDetectionAndStoreInSession() {
 		$detect = new \Mobile_Detect();
 		if (
-			array_key_exists(Routers\IMedia::MEDIA_VERSION_MOBILE, $this->allowedSiteKeysAndUrlValues) && 
+			array_key_exists(Routers\IMedia::MEDIA_VERSION_MOBILE, $this->allowedMediaVersionsAndUrlValues) && 
 			$detect->isMobile()
 		) {
 			$this->mediaSiteVersion = Routers\IMedia::MEDIA_VERSION_MOBILE;
 		} else if (
-			array_key_exists(Routers\IMedia::MEDIA_VERSION_TABLET, $this->allowedSiteKeysAndUrlValues) && 
+			array_key_exists(Routers\IMedia::MEDIA_VERSION_TABLET, $this->allowedMediaVersionsAndUrlValues) && 
 			$detect->isTablet()
 		) {
 			$this->mediaSiteVersion = Routers\IMedia::MEDIA_VERSION_TABLET;

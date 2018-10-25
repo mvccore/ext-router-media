@@ -26,13 +26,14 @@ implements	\MvcCore\Ext\Routers\IMedia,
 {
 	use \MvcCore\Ext\Routers\Extended;
 
-	use \MvcCore\Ext\Routers\Media\PropsGettersSetters;
 	use \MvcCore\Ext\Routers\Media\Preparing;
 	use \MvcCore\Ext\Routers\Media\PreRouting;
+	use \MvcCore\Ext\Routers\Media\PropsGettersSetters;
 	use \MvcCore\Ext\Routers\Media\RedirectSections;
-	use \MvcCore\Ext\Routers\Media\UrlByRouteSections;
-	use \MvcCore\Ext\Routers\Media\UrlByRoute;
 	use \MvcCore\Ext\Routers\Media\Routing;
+	use \MvcCore\Ext\Routers\Media\UrlByRoute;
+	use \MvcCore\Ext\Routers\Media\UrlByRouteSections;
+	use \MvcCore\Ext\Routers\Media\UrlByRouteSectionsMedia;
 	
 	/**
 	 * MvcCore Extension - Router Media - version:

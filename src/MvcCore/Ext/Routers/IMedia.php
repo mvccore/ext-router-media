@@ -80,7 +80,7 @@ interface IMedia
 	 * ```
 	 * @return array
 	 */
-	public function & GetAllowedSiteKeysAndUrlValues ();
+	public function & GetAllowedMediaVersionsAndUrlValues ();
 
 	/**
 	 * Set url prefixes prepended before request url path to describe media site version in url.
@@ -90,13 +90,13 @@ interface IMedia
 	 * If you do not want to use rewrite routes, just put under your alowed keys any values.
 	 * Example: 
 	 * ```
-	 * \MvcCore\Ext\Routers\Media::GetInstance()->SetAllowedSiteKeysAndUrlValues([
+	 * \MvcCore\Ext\Routers\Media::GetInstance()->SetAllowedMediaVersionsAndUrlValues([
 	 *		'mobile'	=> 'm', // to have `/m` substring in every mobile url begin.
 	 *		'full'		=> '',	// to have nothing extra in url for full site version.
 	 * ]);
 	 * ```
-	 * @param array $allowedSiteKeysAndUrlValues
+	 * @param array $allowedMediaVersionsAndUrlValues
 	 * @return \MvcCore\Ext\Routers\IMedia
 	 */
-	public function & SetAllowedSiteKeysAndUrlValues ($allowedSiteKeysAndUrlValues = []);
+	public function & SetAllowedMediaVersionsAndUrlValues ($allowedMediaVersionsAndUrlValues = []);
 }

@@ -31,7 +31,7 @@ trait Preparing
 			$sessStrictModeSwitchUrlParam = static::URL_PARAM_SWITCH_MEDIA_VERSION;
 			if (isset($this->requestGlobalGet[$sessStrictModeSwitchUrlParam])) {
 				$switchUriParamMediaSiteVersion = strtolower($this->requestGlobalGet[$sessStrictModeSwitchUrlParam]);
-				if (isset($this->allowedSiteKeysAndUrlValues[$switchUriParamMediaSiteVersion]))
+				if (isset($this->allowedMediaVersionsAndUrlValues[$switchUriParamMediaSiteVersion]))
 					$this->switchUriParamMediaSiteVersion = $switchUriParamMediaSiteVersion;
 			}
 		//}
@@ -40,7 +40,7 @@ trait Preparing
 		$mediaVersionUrlParam = static::URL_PARAM_MEDIA_VERSION;
 		if (isset($this->session->{$mediaVersionUrlParam})) {
 			$sessionMediaSiteVersion = $this->session->{$mediaVersionUrlParam};
-			if (isset($this->allowedSiteKeysAndUrlValues[$sessionMediaSiteVersion]))
+			if (isset($this->allowedMediaVersionsAndUrlValues[$sessionMediaSiteVersion]))
 				$this->sessionMediaSiteVersion = $this->session->{$mediaVersionUrlParam};
 		}
 		
@@ -81,7 +81,7 @@ trait Preparing
 	 */
 	protected function prepareRequestMediaVersionFromUrlPath () {
 		$requestPath = $this->request->GetPath(TRUE);
-		foreach ($this->allowedSiteKeysAndUrlValues as $mediaSiteVersion => $mediaSiteUrlValue) {
+		foreach ($this->allowedMediaVersionsAndUrlValues as $mediaSiteVersion => $mediaSiteUrlValue) {
 			$mediaSiteUrlPrefix = $mediaSiteUrlValue === '' ? '' : '/' . mb_strtolower($mediaSiteUrlValue);
 			$requestPathPart = mb_strtolower(mb_substr($requestPath, 0, mb_strlen($mediaSiteUrlPrefix)));
 			if ($requestPathPart === $mediaSiteUrlPrefix) {
@@ -106,11 +106,11 @@ trait Preparing
 		$requestMediaVersionFormated = '';
 		if ($requestMediaVersionValidStr) {
 			$requestMediaVersionFormated = mb_strtolower($rawRequestMediaVersion);
-			if (isset($this->allowedSiteKeysAndUrlValues[$requestMediaVersionFormated])) { 
+			if (isset($this->allowedMediaVersionsAndUrlValues[$requestMediaVersionFormated])) { 
 				$this->requestMediaSiteVersion = $requestMediaVersionFormated;
 				$result = TRUE;
 			} else {
-				$allowedSiteKey = array_search($requestMediaVersionFormated, array_values($this->allowedSiteKeysAndUrlValues), TRUE);
+				$allowedSiteKey = array_search($requestMediaVersionFormated, array_values($this->allowedMediaVersionsAndUrlValues), TRUE);
 				if ($allowedSiteKey !== FALSE) {
 					$this->requestMediaSiteVersion = $allowedSiteKey;
 					$result = TRUE;

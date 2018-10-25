@@ -29,7 +29,7 @@ trait PropsGettersSetters
 	 * If you do not want to use rewrite routes, just put under your alowed keys any values.
 	 * @var array
 	 */
-	protected $allowedSiteKeysAndUrlValues = [
+	protected $allowedMediaVersionsAndUrlValues = [
 		Routers\IMedia::MEDIA_VERSION_MOBILE	=> 'm',
 		Routers\IMedia::MEDIA_VERSION_TABLET	=> 't',
 		Routers\IMedia::MEDIA_VERSION_FULL		=> '',
@@ -102,8 +102,8 @@ trait PropsGettersSetters
 	 * ```
 	 * @return array
 	 */
-	public function & GetAllowedSiteKeysAndUrlValues () {
-		return $this->allowedSiteKeysAndUrlValues;
+	public function & GetAllowedMediaVersionsAndUrlValues () {
+		return $this->allowedMediaVersionsAndUrlValues;
 	}
 
 	/**
@@ -114,16 +114,16 @@ trait PropsGettersSetters
 	 * If you do not want to use rewrite routes, just put under your alowed keys any values.
 	 * Example: 
 	 * ```
-	 * \MvcCore\Ext\Routers\Media::GetInstance()->SetAllowedSiteKeysAndUrlValues([
+	 * \MvcCore\Ext\Routers\Media::GetInstance()->SetAllowedMediaVersionsAndUrlValues([
 	 *		'mobile'	=> 'm', // to have `/m` substring in every mobile url begin.
 	 *		'full'		=> '',	// to have nothing extra in url for full site version.
 	 * ]);
 	 * ```
-	 * @param array $allowedSiteKeysAndUrlValues
+	 * @param array $allowedMediaVersionsAndUrlValues
 	 * @return \MvcCore\Ext\Routers\Media|\MvcCore\Ext\Routers\IMedia
 	 */
-	public function & SetAllowedSiteKeysAndUrlValues ($allowedSiteKeysAndUrlValues = []) {
-		$this->allowedSiteKeysAndUrlValues = $allowedSiteKeysAndUrlValues;
+	public function & SetAllowedMediaVersionsAndUrlValues ($allowedMediaVersionsAndUrlValues = []) {
+		$this->allowedMediaVersionsAndUrlValues = $allowedMediaVersionsAndUrlValues;
 		return $this;
 	}
 	
@@ -143,7 +143,7 @@ trait PropsGettersSetters
 			}
 			$targetMediaUrlValue = NULL;
 		} else {
-			$targetMediaUrlValue = $this->allowedSiteKeysAndUrlValues[$targetMediaSiteVersion];
+			$targetMediaUrlValue = $this->allowedMediaVersionsAndUrlValues[$targetMediaSiteVersion];
 		}
 		return $targetMediaUrlValue;
 	}

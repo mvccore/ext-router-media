@@ -33,14 +33,17 @@ trait RedirectSections
 			$systemParams[$mediaVersionParamName]
 		);
 		
+
 		$urlPathWithQueryIsHome = NULL;
 		if ($this->anyRoutesConfigured) {
+
 
 			if ($targetMediaUrlValue === NULL) {
 				unset($systemParams[$mediaVersionParamName]);
 			} else {
 				$systemParams[$mediaVersionParamName] = $targetMediaUrlValue;
 			}
+
 
 			$this->redirectAddAllRemainingInGlobalGet($urlPathWithQuerySection);
 		} else {

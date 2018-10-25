@@ -44,10 +44,13 @@ trait UrlByRouteSections
 			$params = array_merge($this->requestedParams, $params);
 		$routeMethod = $route->GetMethod();
 
-
-		list($mediaVersionUrlParam, $mediaSiteUrlValue) = $this->urlByRouteSectionsMedia(
-			$route, $params, $defaultParams, $routeMethod
-		);
+		
+		$multipleMediaVersionConfigured = count($this->allowedMediaVersionsAndUrlValues) > 1;
+		$mediaVersionUrlParam = $mediaSiteUrlValue = NULL;
+		if ($multipleMediaVersionConfigured) 
+			list($mediaVersionUrlParam, $mediaSiteUrlValue) = $this->urlByRouteSectionsMedia(
+				$route, $params, $defaultParams, $routeMethod
+			);
 		
 
 		// complete by given route base url address part and part with path and query string
@@ -55,8 +58,11 @@ trait UrlByRouteSections
 			$this->request, $params, $this->GetDefaultParams(), $this->getQueryStringParamsSepatator()
 		);
 		
+
 		$systemParams = [];
-		if ($mediaSiteUrlValue !== NULL) $systemParams[$mediaVersionUrlParam] = $mediaSiteUrlValue;
+		if ($multipleMediaVersionConfigured && $mediaSiteUrlValue !== NULL)
+			$systemParams[$mediaVersionUrlParam] = $mediaSiteUrlValue;
+
 
 		return [
 			$urlBaseSection, 

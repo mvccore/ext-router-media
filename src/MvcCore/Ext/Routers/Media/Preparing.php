@@ -25,7 +25,12 @@ trait Preparing
 	 * @return void
 	 */
 	protected function prepareMedia () {
-		//if ($this->mediaSiteVersion) return;
+		// if there is only one allowed version, do not process anything else
+		if (count($this->allowedMediaVersionsAndUrlValues) < 2) {
+			$this->mediaSiteVersion = static::MEDIA_VERSION_FULL;
+			$this->requestMediaSiteVersion = $this->mediaSiteVersion;
+			return;
+		}
 
 		//if ($this->stricModeBySession) { // check it with any strict session configuration to have more flexible navigations
 			$sessStrictModeSwitchUrlParam = static::URL_PARAM_SWITCH_MEDIA_VERSION;

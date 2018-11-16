@@ -15,7 +15,7 @@ namespace MvcCore\Ext\Routers;
 
 /**
  * Responsibility - recognize media site version from url or user agent or session and set 
- *					up request object, complete automaticly rewrited url with remembered 
+ *					up request object, complete automatically rewritten url with remembered 
  *					media site version. Redirect to proper media site version by configuration.
  *					Than route request like parent class does.
  */
@@ -59,7 +59,7 @@ interface IMedia
 	 * but if you are creating url into different site version in
 	 * controller or template by `$this->Url()` with key `mediaSiteKey`
 	 * in second `$params` array argument, this switching param for strict 
-	 * mode is added automaticly.
+	 * mode is added automatically.
 	 * @var string
 	 */
 	const URL_PARAM_SWITCH_MEDIA_VERSION = 'switch_media_version';

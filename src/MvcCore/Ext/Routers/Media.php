@@ -15,7 +15,7 @@ namespace MvcCore\Ext\Routers;
 
 /**
  * Responsibility - recognize media site version from url or user agent or session and set 
- *					up request object, complete automaticly rewrited url with remembered 
+ *					up request object, complete automatically rewritten url with remembered 
  *					media site version. Redirect to proper media site version by configuration.
  *					Than route request like parent class does.
  */
@@ -37,7 +37,7 @@ implements	\MvcCore\Ext\Routers\IMedia,
 	
 	/**
 	 * MvcCore Extension - Router Media - version:
-	 * Comparation by PHP function version_compare();
+	 * Comparison by PHP function version_compare();
 	 * @see http://php.net/manual/en/function.version-compare.php
 	 */
 	const VERSION = '5.0.0-alpha';

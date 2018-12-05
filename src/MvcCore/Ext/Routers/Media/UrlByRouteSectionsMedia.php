@@ -36,8 +36,9 @@ trait UrlByRouteSectionsMedia
 			$mediaSiteUrlValue = $this->allowedMediaVersionsAndUrlValues[$mediaSiteVersion];
 		} else {
 			$mediaSiteUrlValue = NULL;
+			$selfClass = version_compare(PHP_VERSION, '5.5', '>') ? self::class : __CLASS__;
 			trigger_error(
-				'['.__CLASS__.'] Not allowed media site version used to generate url: `'
+				'['.$selfClass.'] Not allowed media site version used to generate url: `'
 				.$mediaSiteVersion.'`. Allowed values: `'
 				.implode('`, `', array_keys($this->allowedMediaVersionsAndUrlValues)) . '`.',
 				E_USER_ERROR

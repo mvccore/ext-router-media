@@ -26,7 +26,7 @@ trait PropsGettersSetters
 	 * Keys are media site version values and values in array are URL prefixes, how
 	 * to describe media site version in url.
 	 * Full version with possible empty string prefix is necessary to put as last item.
-	 * If you do not want to use rewrite routes, just put under your alowed keys any values.
+	 * If you do not want to use rewrite routes, just put under your allowed keys any values.
 	 * @var array
 	 */
 	protected $allowedMediaVersionsAndUrlValues = [
@@ -43,7 +43,7 @@ trait PropsGettersSetters
 	/**
 	 * Media site version to switch user into. 
 	 * Default value is `NULL`. If there is any media site version 
-	 * under key `media_version` in `$_GET` array, this properthy  
+	 * under key `media_version` in `$_GET` array, this property  
 	 * has string with this value.
 	 * @var string|NULL
 	 */
@@ -92,7 +92,7 @@ trait PropsGettersSetters
 	 * Keys are media site version values and values in array are URL prefixes, how
 	 * to describe media site version in url.
 	 * Full version with possible empty string prefix is necessary to have as last item.
-	 * If you do not want to use rewrite routes, just have under your alowed keys any values.
+	 * If you do not want to use rewrite routes, just have under your allowed keys any values.
 	 * Example: 
 	 * ```
 	 * [
@@ -111,7 +111,7 @@ trait PropsGettersSetters
 	 * Keys are media site version values and values in array are URL prefixes, how
 	 * to describe media site version in url.
 	 * Full version with possible empty string prefix is necessary to put as last item.
-	 * If you do not want to use rewrite routes, just put under your alowed keys any values.
+	 * If you do not want to use rewrite routes, just put under your allowed keys any values.
 	 * Example: 
 	 * ```
 	 * \MvcCore\Ext\Routers\Media::GetInstance()->SetAllowedMediaVersionsAndUrlValues([
@@ -123,6 +123,7 @@ trait PropsGettersSetters
 	 * @return \MvcCore\Ext\Routers\Media|\MvcCore\Ext\Routers\IMedia
 	 */
 	public function & SetAllowedMediaVersionsAndUrlValues ($allowedMediaVersionsAndUrlValues = []) {
+		/** @var $this \MvcCore\Ext\Routers\IMedia */
 		$this->allowedMediaVersionsAndUrlValues = $allowedMediaVersionsAndUrlValues;
 		return $this;
 	}

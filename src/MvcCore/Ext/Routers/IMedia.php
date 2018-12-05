@@ -70,7 +70,7 @@ interface IMedia
 	 * Keys are media site version values and values in array are URL prefixes, how
 	 * to describe media site version in url.
 	 * Full version with possible empty string prefix is necessary to have as last item.
-	 * If you do not want to use rewrite routes, just have under your alowed keys any values.
+	 * If you do not want to use rewrite routes, just have under your allowed keys any values.
 	 * Example: 
 	 * ```
 	 * [
@@ -87,7 +87,7 @@ interface IMedia
 	 * Keys are media site version values and values in array are URL prefixes, how
 	 * to describe media site version in url.
 	 * Full version with possible empty string prefix is necessary to put as last item.
-	 * If you do not want to use rewrite routes, just put under your alowed keys any values.
+	 * If you do not want to use rewrite routes, just put under your allowed keys any values.
 	 * Example: 
 	 * ```
 	 * \MvcCore\Ext\Routers\Media::GetInstance()->SetAllowedMediaVersionsAndUrlValues([

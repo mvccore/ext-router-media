@@ -56,8 +56,8 @@ trait Preparing
 	/**
 	 * Try to set up into `\MvcCore\Request` object new 
 	 * media site version detected from requested url by url query string param
-	 * or by url path prefix. If there is catched any valid media site 
-	 * version - set this value into request object. If there is nothing catched,
+	 * or by url path prefix. If there is caught any valid media site 
+	 * version - set this value into request object. If there is nothing caught,
 	 * set into request object full media site version anyway.
 	 * @return void
 	 */

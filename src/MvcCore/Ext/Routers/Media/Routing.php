@@ -28,7 +28,7 @@ trait Routing
 	 *   go through all configured routes and try to find matching route:
 	 *   - If there is caught any matching route:
 	 *	 - Set up `\MvcCore\Router::$currentRoute`.
-	 *	 - Reset `\MvcCore\Request::$params` again with with default route params,
+	 *	 - Reset `\MvcCore\Request::$params` again with default route params,
 	 *	   with request params itself and with params parsed from matching process.
 	 * - If there is no route matching the request and also if the request is targeting homepage
 	 *   or there is no route matching the request and also if the request is targeting something

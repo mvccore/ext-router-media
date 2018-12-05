@@ -25,7 +25,7 @@ trait PreRouting
 	 *     and redirect to the same page with new media site version substring 
 	 *     in url or with new media site version query string param.
 	 * - If there is no media site version in session or if media site version 
-	 *   from sesson is not allowed:
+	 *   from session is not allowed:
 	 *   - Recognize media site version by `\Mobile_Detect` third party library 
 	 *     and store recognized version in this context and in session namespace.
 	 * - Else set up media site version from session into this context
@@ -82,14 +82,14 @@ trait PreRouting
 		// used by extended router to redirect non-valid values in 3rd level domains
 		if (isset($this->requestGlobalGet[$switchMediaVersionParamName]))
 			unset($this->requestGlobalGet[$switchMediaVersionParamName]);
-		// redirect to no switch param uri version
+		// redirect to no switch param URL version
 		return $this->redirectToVersion(
 			$this->setUpMediaSiteVersionToContextAndSession($this->switchUriParamMediaSiteVersion)
 		);
 	}
 
 	/**
-	 * Detect media site version by sended user agent string by 
+	 * Detect media site version by sent user agent string by 
 	 * third party `\Mobile_Detect` library and store detected result 
 	 * in session namespace for next requests.
 	 * @return void

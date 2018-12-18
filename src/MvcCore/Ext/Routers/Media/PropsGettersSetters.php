@@ -36,9 +36,9 @@ trait PropsGettersSetters
 	];
 
 
-	/*************************************************************************************
-	 *                                Internal Properties                                *
-	 ************************************************************************************/
+	/***************************************************************************
+	 *                           Internal Properties                           *
+	 **************************************************************************/
 	
 	/**
 	 * Media site version to switch user into. 
@@ -83,16 +83,16 @@ trait PropsGettersSetters
 	protected $firstRequestMediaDetection = NULL;
 	
 	
-	/*************************************************************************************
-	 *                                  Public Methods                                   *
-	 ************************************************************************************/
+	/***************************************************************************
+	 *                             Public Methods                              *
+	 **************************************************************************/
 
 	/**
-	 * Get URL prefixes prepended before request URL path to describe media site version in url.
-	 * Keys are media site version values and values in array are URL prefixes, how
-	 * to describe media site version in url.
-	 * Full version with possible empty string prefix is necessary to have as last item.
-	 * If you do not want to use rewrite routes, just have under your allowed keys any values.
+	 * Get URL prefixes prepended before request URL path to describe media site 
+	 * version in url. Keys are media site version values and values in array are 
+	 * URL prefixes, how to describe media site version in URL. Full version with 
+	 * possible empty string prefix is necessary to have as last item. If you do 
+	 * not want to use rewrite routes, just have under your allowed keys any values.
 	 * Example: 
 	 * ```
 	 * [
@@ -107,11 +107,11 @@ trait PropsGettersSetters
 	}
 
 	/**
-	 * Set URL prefixes prepended before request URL path to describe media site version in url.
-	 * Keys are media site version values and values in array are URL prefixes, how
-	 * to describe media site version in url.
-	 * Full version with possible empty string prefix is necessary to put as last item.
-	 * If you do not want to use rewrite routes, just put under your allowed keys any values.
+	 * Set URL prefixes prepended before request URL path to describe media site 
+	 * version in URL. Keys are media site version values and values in array are 
+	 * URL prefixes, how to describe media site version in URL. Full version with 
+	 * possible empty string prefix is necessary to put as last item. If you do 
+	 * not want to use rewrite routes, just put under your allowed keys any values.
 	 * Example: 
 	 * ```
 	 * \MvcCore\Ext\Routers\Media::GetInstance()->SetAllowedMediaVersionsAndUrlValues([
@@ -129,11 +129,21 @@ trait PropsGettersSetters
 	}
 	
 
-	/*************************************************************************************
-	 *                                  Protected Methods                                *
-	 ************************************************************************************/
+	/***************************************************************************
+	 *                             Protected Methods                           *
+	 **************************************************************************/
 
-	// TODO: provizorní
+	/**
+	 * Return media site version string value for redirection URL but if media 
+	 * site version is defined by `GET` query string param, return `NULL` and set 
+	 * target media site version string into `GET` params to complete query 
+	 * string params into redirect URL later. But if the target media site version 
+	 * string is the same as full media site version (default value), unset this
+	 * param from `GET` params array and return `NULL` in query string media 
+	 * site version definition case.
+	 * @param string $targetMediaSiteVersion Media site version string.
+	 * @return string|NULL
+	 */
 	protected function redirectMediaGetUrlValueAndUnsetGet ($targetMediaSiteVersion) {
 		$mediaVersionUrlParam = static::URL_PARAM_MEDIA_VERSION;
 		if (isset($this->requestGlobalGet[$mediaVersionUrlParam])) {

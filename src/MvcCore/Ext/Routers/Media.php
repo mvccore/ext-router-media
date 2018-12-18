@@ -14,10 +14,13 @@
 namespace MvcCore\Ext\Routers;
 
 /**
- * Responsibility - recognize media site version from URL or user agent or session and set 
- *					up request object, complete automatically rewritten URL with remembered 
- *					media site version. Redirect to proper media site version by configuration.
- *					Than route request like parent class does.
+ * Responsibility - recognize media site version from URL or user agent or 
+ *					session and set up request object, complete automatically 
+ *					rewritten URL with remembered media site version. Redirect 
+ *					to proper media site version by configuration.Than route 
+ *					request like parent class does. Generate URL addresses with 
+ *					prefixed media site version for recognized special devices 
+ *					or add only media site version into query string if necessary.
  */
 class		Media 
 extends		\MvcCore\Router

@@ -70,7 +70,8 @@ trait Preparing
 	}
 
 	/**
-	 * Try to set up media site version from request query string.
+	 * Try to set up media site version from request query string as request 
+	 * media site version.
 	 * @return void
 	 */
 	protected function prepareRequestMediaVersionFromUrlQueryString () {
@@ -79,9 +80,9 @@ trait Preparing
 	}
 	
 	/**
-	 * Try to set up media site version from request path.
-	 * If there is any request path detected, remove media site version from 
-	 * request path and store detected media site version in local context.
+	 * Try to set up media site version from request path as request media site 
+	 * version. If there is any request path detected, remove media site version 
+	 * from request path and store detected media site version in local context.
 	 * @return void
 	 */
 	protected function prepareRequestMediaVersionFromUrlPath () {
@@ -101,6 +102,9 @@ trait Preparing
 	}
 
 	/**
+	 * Try to set up given media site version as request media site version if 
+	 * it is valid. Convert it to lower case and check if exists as value or key 
+	 * in protected property `$this->allowedMediaVersionsAndUrlValues;`.
 	 * @param string|NULL $rawRequestMediaVersion 
 	 * @return bool
 	 */

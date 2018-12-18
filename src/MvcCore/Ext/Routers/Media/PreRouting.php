@@ -14,6 +14,7 @@
 namespace MvcCore\Ext\Routers\Media;
 
 use MvcCore\Ext\Routers;
+use \Mobile_Detect;
 
 trait PreRouting
 {

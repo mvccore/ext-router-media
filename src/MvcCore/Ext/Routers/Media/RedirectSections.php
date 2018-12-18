@@ -16,10 +16,10 @@ namespace MvcCore\Ext\Routers\Media;
 trait RedirectSections
 {
 	/**
-	 * Redirect to target localization version with path and by cloned request 
-	 * object global `$_GET` collection. Return always `FALSE`.
+	 * Redirect to target media site version with path and by global `$_GET` 
+	 * collection (cloned from request object). Return always `FALSE`.
 	 * @param array $systemParams 
-	 * @return array `string $urlBaseSection, string $urlPathWithQuerySection, array $systemParams, bool|NULL $urlPathWithQueryIsHome`
+	 * @return array `[string $urlBaseSection, string $urlPathWithQuerySection, array $systemParams, bool|NULL $urlPathWithQueryIsHome]`
 	 */
 	protected function redirectToVersionSections ($systemParams) {
 		$request = & $this->request;

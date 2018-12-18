@@ -15,6 +15,24 @@ namespace MvcCore\Ext\Routers\Media;
 
 trait UrlByRouteSectionsMedia
 {
+	/**
+	 * Return media site version for result URL as media site version param name 
+	 * string and media site version param value string. 
+	 * 
+	 * If media site version is specified in given params array, return this 
+	 * media site version. If there is not any specific media site version in 
+	 * params array, try to look into given default params array and if there is 
+	 * also nothing, use current media site version from router (which could be 
+	 * from session or from request). Change params array and add special media 
+	 * site version switch param when router is configured to hold media site 
+	 * version strictly in session. But do not return any media site version for 
+	 * not allowed route methods and do not return any not allowed values for 
+	 * media site version.
+	 * @param \MvcCore\Route|\MvcCore\IRoute $route 
+	 * @param array $params 
+	 * @param string|NULL $routeMethod 
+	 * @return array `[string $mediaVersionUrlParam, string $mediaSiteUrlValue]`
+	 */
 	protected function urlByRouteSectionsMedia (\MvcCore\IRoute & $route, array & $params = [], array & $defaultParams = [], $routeMethod = NULL) {
 		// separate `$mediaSiteVersion` from `$params` to work with the version more specifically
 		$mediaVersionUrlParam = static::URL_PARAM_MEDIA_VERSION;

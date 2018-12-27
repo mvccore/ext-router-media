@@ -16,13 +16,10 @@ namespace MvcCore\Ext\Routers\Media;
 trait UrlByRoute
 {
 	/**
-	 * Complete non-absolute, non-localized url by route instance reverse info.
-	 * If there is key `media_version` in `$params`, unset this param before
-	 * route url completing and choose by this param url prefix to prepend 
-	 * completed url string.
-	 * If there is key `localization` in `$params`, unset this param before
-	 * route url completing and place this param as url prefix to prepend 
-	 * completed url string and to prepend media site version prefix.
+	 * Complete non-absolute, url by route instance reverse info with special 
+	 * media type prefix or without the prefix. If there is key `media_version` 
+	 * in `$params`, unset this param before route URL completing and choose by 
+	 * this param url prefix to prepend completed URL string.
 	 * Example:
 	 *	Input (`\MvcCore\Route::$reverse`):
 	 *		`"/products-list/<name>/<color>"`

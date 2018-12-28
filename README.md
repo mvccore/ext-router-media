@@ -155,7 +155,7 @@ $router->SetSessionExpirationSeconds(
 
 ### 5.2. Advanced Configuration - Strict Session Mode
 **In session strict mode, there is not possible to change media site version only by requesting different media site version prefix in URL.**
-Stric session mode is router mode when media site version is managed by session value from the first request recognition. 
+Strict session mode is router mode when media site version is managed by session value from the first request recognition. 
 All requests to different media site version than the version in session are automatically redirected to media site version stored in the session.
 
 Normally, there is possible to get different media site version only by 

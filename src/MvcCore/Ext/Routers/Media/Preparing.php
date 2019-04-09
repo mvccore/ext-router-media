@@ -87,15 +87,17 @@ trait Preparing
 	 */
 	protected function prepareRequestMediaVersionFromUrlPath () {
 		$requestPath = $this->request->GetPath(TRUE);
+		$requestPathExploded = explode('/', trim($requestPath, '/'));
+		$requestPathFirstPart = mb_strtolower($requestPathExploded[0]);
 		foreach ($this->allowedMediaVersionsAndUrlValues as $mediaSiteVersion => $mediaSiteUrlValue) {
-			$mediaSiteUrlPrefix = $mediaSiteUrlValue === '' ? '' : '/' . mb_strtolower($mediaSiteUrlValue);
-			$requestPathPart = mb_strtolower(mb_substr($requestPath, 0, mb_strlen($mediaSiteUrlPrefix)));
-			if ($requestPathPart === $mediaSiteUrlPrefix) {
+			$mediaSiteUrlPrefix = mb_strtolower($mediaSiteUrlValue);
+			if ($requestPathFirstPart === $mediaSiteUrlPrefix) {
 				//$this->prepareSetUpRequestMediaSiteVersionIfValid($mediaSiteVersion);
 				$this->requestMediaSiteVersion = $mediaSiteVersion;
-				$this->request->SetPath(
-					mb_substr($requestPath, mb_strlen($mediaSiteUrlPrefix))
-				);
+				if (mb_strlen($mediaSiteUrlPrefix) > 0) 
+					$this->request->SetPath(
+						mb_substr($requestPath, mb_strlen('/' . $mediaSiteUrlPrefix))	
+					);
 				break;
 			}
 		}

@@ -101,7 +101,7 @@ interface IMedia
 	 * @param array $allowedMediaVersionsAndUrlValues
 	 * @return \MvcCore\Ext\Routers\IMedia
 	 */
-	public function & SetAllowedMediaVersionsAndUrlValues ($allowedMediaVersionsAndUrlValues = []);
+	public function SetAllowedMediaVersionsAndUrlValues ($allowedMediaVersionsAndUrlValues = []);
 
 	/**
 	 * Route current app request by configured routes lists or by query string.
@@ -155,5 +155,5 @@ interface IMedia
 	 * @param string $urlParamRouteName
 	 * @return string
 	 */
-	public function UrlByRoute (\MvcCore\IRoute & $route, array & $params = [], $urlParamRouteName = NULL);
+	public function UrlByRoute (\MvcCore\IRoute $route, array & $params = [], $urlParamRouteName = NULL);
 }

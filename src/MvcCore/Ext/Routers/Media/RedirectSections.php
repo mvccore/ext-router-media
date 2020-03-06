@@ -22,7 +22,7 @@ trait RedirectSections
 	 * @return array `[string $urlBaseSection, string $urlPathWithQuerySection, array $systemParams, bool|NULL $urlPathWithQueryIsHome]`
 	 */
 	protected function redirectToVersionSections ($systemParams) {
-		$request = & $this->request;
+		$request = $this->request;
 		$urlBaseSection = $request->GetBaseUrl();
 		$urlPathWithQuerySection = $request->GetPath(TRUE);
 

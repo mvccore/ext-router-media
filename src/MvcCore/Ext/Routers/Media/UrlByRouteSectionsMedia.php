@@ -33,7 +33,7 @@ trait UrlByRouteSectionsMedia
 	 * @param string|NULL $routeMethod 
 	 * @return array `[string $mediaVersionUrlParam, string $mediaSiteUrlValue]`
 	 */
-	protected function urlByRouteSectionsMedia (\MvcCore\IRoute & $route, array & $params = [], array & $defaultParams = [], $routeMethod = NULL) {
+	protected function urlByRouteSectionsMedia (\MvcCore\IRoute $route, array & $params = [], array & $defaultParams = [], $routeMethod = NULL) {
 		// separate `$mediaSiteVersion` from `$params` to work with the version more specifically
 		$mediaVersionUrlParam = static::URL_PARAM_MEDIA_VERSION;
 		if (isset($params[$mediaVersionUrlParam])) {
@@ -54,9 +54,8 @@ trait UrlByRouteSectionsMedia
 			$mediaSiteUrlValue = $this->allowedMediaVersionsAndUrlValues[$mediaSiteVersion];
 		} else {
 			$mediaSiteUrlValue = NULL;
-			$selfClass = version_compare(PHP_VERSION, '5.5', '>') ? self::class : __CLASS__;
 			trigger_error(
-				'['.$selfClass.'] Not allowed media site version used to generate url: `'
+				'['.get_class().'] Not allowed media site version used to generate url: `'
 				.$mediaSiteVersion.'`. Allowed values: `'
 				.implode('`, `', array_keys($this->allowedMediaVersionsAndUrlValues)) . '`.',
 				E_USER_ERROR

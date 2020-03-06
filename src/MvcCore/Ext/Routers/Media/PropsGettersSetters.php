@@ -122,7 +122,7 @@ trait PropsGettersSetters
 	 * @param array $allowedMediaVersionsAndUrlValues
 	 * @return \MvcCore\Ext\Routers\Media|\MvcCore\Ext\Routers\IMedia
 	 */
-	public function & SetAllowedMediaVersionsAndUrlValues ($allowedMediaVersionsAndUrlValues = []) {
+	public function SetAllowedMediaVersionsAndUrlValues ($allowedMediaVersionsAndUrlValues = []) {
 		/** @var $this \MvcCore\Ext\Routers\IMedia */
 		$this->allowedMediaVersionsAndUrlValues = $allowedMediaVersionsAndUrlValues;
 		return $this;

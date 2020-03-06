@@ -37,7 +37,7 @@ trait UrlByRoute
 	 * @param string $urlParamRouteName
 	 * @return string
 	 */
-	public function UrlByRoute (\MvcCore\IRoute & $route, array & $params = [], $urlParamRouteName = NULL) {
+	public function UrlByRoute (\MvcCore\IRoute $route, array & $params = [], $urlParamRouteName = NULL) {
 		// get domain with base path url section, 
 		// path with query string url section 
 		// and system params for url prefixes

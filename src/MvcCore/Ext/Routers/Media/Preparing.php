@@ -25,6 +25,7 @@ trait Preparing
 	 * @return void
 	 */
 	protected function prepareMedia () {
+		/** @var $this \MvcCore\Ext\Routers\Media */
 		// if there is only one allowed version, do not process anything else
 		if (count($this->allowedMediaVersionsAndUrlValues) < 2) {
 			$this->mediaSiteVersion = static::MEDIA_VERSION_FULL;
@@ -62,6 +63,7 @@ trait Preparing
 	 * @return void
 	 */
 	protected function prepareRequestMediaVersionFromUrl () {
+		/** @var $this \MvcCore\Ext\Routers\Media */
 		$this->prepareRequestMediaVersionFromUrlQueryString();
 		if ($this->requestMediaSiteVersion === NULL && $this->anyRoutesConfigured) 
 			$this->prepareRequestMediaVersionFromUrlPath();
@@ -75,6 +77,7 @@ trait Preparing
 	 * @return void
 	 */
 	protected function prepareRequestMediaVersionFromUrlQueryString () {
+		/** @var $this \MvcCore\Ext\Routers\Media */
 		$requestMediaVersion = $this->request->GetParam(static::URL_PARAM_MEDIA_VERSION, 'a-zA-Z');
 		$this->prepareSetUpRequestMediaSiteVersionIfValid($requestMediaVersion);
 	}
@@ -86,6 +89,7 @@ trait Preparing
 	 * @return void
 	 */
 	protected function prepareRequestMediaVersionFromUrlPath () {
+		/** @var $this \MvcCore\Ext\Routers\Media */
 		$requestPath = $this->request->GetPath(TRUE);
 		$requestPathExploded = explode('/', trim($requestPath, '/'));
 		$requestPathFirstPart = mb_strtolower($requestPathExploded[0]);
@@ -111,6 +115,7 @@ trait Preparing
 	 * @return bool
 	 */
 	protected function prepareSetUpRequestMediaSiteVersionIfValid ($rawRequestMediaVersion) {
+		/** @var $this \MvcCore\Ext\Routers\Media */
 		$result = FALSE;
 		$rawRequestMediaVersionLength = $rawRequestMediaVersion ? strlen($rawRequestMediaVersion) : 0;
 		$requestMediaVersionValidStr = $rawRequestMediaVersionLength > 0;

@@ -48,8 +48,7 @@ trait PreRouting
 				if (!$this->manageMediaSwitchingAndRedirect()) return FALSE;
 
 			} else if (
-				// wrong, because for example requests with HEAD were not recognized into any media version:
-				/*(($this->isGet && $this->routeGetRequestsOnly) || !$this->routeGetRequestsOnly) && */
+				(($this->isGet && $this->routeGetRequestsOnly) || !$this->routeGetRequestsOnly) && 
 				$this->sessionMediaSiteVersion === NULL
 			) {
 				// if there is no session record about media site version:

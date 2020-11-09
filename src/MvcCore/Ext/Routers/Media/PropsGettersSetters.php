@@ -50,9 +50,9 @@ trait PropsGettersSetters
 	protected $switchUriParamMediaSiteVersion = NULL;
 
 	/**
-	 * Finally resolved media site version, used in `\MvcCore\Request` 
+	 * Resolved media site version, used in `\MvcCore\Request` 
 	 * object and possible to use in controller or view.
-	 * Possible values are always: `"full" | "tablet" | "mobile"`.
+	 * Possible values are always: `"full" | "tablet" | "mobile" | NULL`.
 	 * @var string|NULL
 	 */
 	protected $mediaSiteVersion = NULL;
@@ -86,6 +86,17 @@ trait PropsGettersSetters
 	/***************************************************************************
 	 *                             Public Methods                              *
 	 **************************************************************************/
+
+	/**
+	 * Get resolved media site version, used in `\MvcCore\Request` 
+	 * object and possible to use in controller or view.
+	 * Possible values are always: `"full" | "tablet" | "mobile" | NULL`.
+	 * @return string|NULL
+	 */
+	public function GetMediaSiteVersion () {
+		/** @var $this \MvcCore\Ext\Routers\Media */
+		return $this->mediaSiteVersion;
+	}
 
 	/**
 	 * Get URL prefixes prepended before request URL path to describe media site 

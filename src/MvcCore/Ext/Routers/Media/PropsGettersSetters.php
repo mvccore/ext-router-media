@@ -97,6 +97,19 @@ trait PropsGettersSetters
 		/** @var $this \MvcCore\Ext\Routers\Media */
 		return $this->mediaSiteVersion;
 	}
+	
+	/**
+	 * Set media site version, used in `\MvcCore\Request` 
+	 * object and possible to use in controller or view.
+	 * Possible values are always: `"full" | "tablet" | "mobile" | NULL`.
+	 * @param string|NULL $mediaSiteVersion
+	 * @return \MvcCore\Ext\Routers\Media|\MvcCore\Ext\Routers\IMedia
+	 */
+	public function SetMediaSiteVersion ($mediaSiteVersion) {
+		/** @var $this \MvcCore\Ext\Routers\Media */
+		$this->mediaSiteVersion = $mediaSiteVersion;
+		return $this;
+	}
 
 	/**
 	 * Get URL prefixes prepended before request URL path to describe media site 

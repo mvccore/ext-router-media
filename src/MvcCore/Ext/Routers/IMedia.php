@@ -77,6 +77,15 @@ interface IMedia
 	public function GetMediaSiteVersion ();
 
 	/**
+	 * Set media site version, used in `\MvcCore\Request` 
+	 * object and possible to use in controller or view.
+	 * Possible values are always: `"full" | "tablet" | "mobile" | NULL`.
+	 * @param string|NULL $mediaSiteVersion
+	 * @return \MvcCore\Ext\Routers\IMedia
+	 */
+	public function SetMediaSiteVersion ($mediaSiteVersion);
+
+	/**
 	 * Get URL prefixes prepended before request URL path to describe media site 
 	 * version in url. Keys are media site version values and values in array are 
 	 * URL prefixes, how to describe media site version in URL. Full version with 

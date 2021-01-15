@@ -7,8 +7,8 @@
  * For the full copyright and license information, please view
  * the LICENSE.md file that are distributed with this source code.
  *
- * @copyright	Copyright (c) 2016 Tom Flídr (https://github.com/mvccore/mvccore)
- * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
+ * @copyright	Copyright (c) 2016 Tom Flidr (https://github.com/mvccore)
+ * @license		https://mvccore.github.io/docs/mvccore/5.0.0/LICENCE.md
  */
 
 namespace MvcCore\Ext\Routers;
@@ -22,8 +22,8 @@ namespace MvcCore\Ext\Routers;
  *					prefixed media site version for recognized special devices 
  *					or add only media site version into query string if necessary.
  */
-interface IMedia
-{
+interface IMedia {
+
 	/**
 	 * Predefined media site version value for full version.
 	 * @var string
@@ -81,7 +81,7 @@ interface IMedia
 	 * object and possible to use in controller or view.
 	 * Possible values are always: `"full" | "tablet" | "mobile" | NULL`.
 	 * @param string|NULL $mediaSiteVersion
-	 * @return \MvcCore\Ext\Routers\IMedia
+	 * @return \MvcCore\Ext\Routers\Media
 	 */
 	public function SetMediaSiteVersion ($mediaSiteVersion);
 
@@ -116,7 +116,7 @@ interface IMedia
 	 * ]);
 	 * ```
 	 * @param array $allowedMediaVersionsAndUrlValues
-	 * @return \MvcCore\Ext\Routers\IMedia
+	 * @return \MvcCore\Ext\Routers\Media
 	 */
 	public function SetAllowedMediaVersionsAndUrlValues ($allowedMediaVersionsAndUrlValues = []);
 
@@ -167,7 +167,7 @@ interface IMedia
 	 *		);`
 	 *	Output:
 	 *		`/application/base-bath/m/products-list/cool-product-name/blue?variant[]=L&amp;variant[]=XL"`
-	 * @param \MvcCore\Route|\MvcCore\IRoute &$route
+	 * @param \MvcCore\Route &$route
 	 * @param array $params
 	 * @param string $urlParamRouteName
 	 * @return string

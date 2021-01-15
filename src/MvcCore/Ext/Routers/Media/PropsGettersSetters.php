@@ -7,16 +7,16 @@
  * For the full copyright and license information, please view
  * the LICENSE.md file that are distributed with this source code.
  *
- * @copyright	Copyright (c) 2016 Tom Flídr (https://github.com/mvccore/mvccore)
- * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
+ * @copyright	Copyright (c) 2016 Tom Flidr (https://github.com/mvccore)
+ * @license		https://mvccore.github.io/docs/mvccore/5.0.0/LICENCE.md
  */
 
 namespace MvcCore\Ext\Routers\Media;
 
 use MvcCore\Ext\Routers;
 
-trait PropsGettersSetters
-{
+trait PropsGettersSetters {
+
 	/*************************************************************************************
 	 *                              Configurable Properties                              *
 	 ************************************************************************************/
@@ -103,7 +103,7 @@ trait PropsGettersSetters
 	 * object and possible to use in controller or view.
 	 * Possible values are always: `"full" | "tablet" | "mobile" | NULL`.
 	 * @param string|NULL $mediaSiteVersion
-	 * @return \MvcCore\Ext\Routers\Media|\MvcCore\Ext\Routers\IMedia
+	 * @return \MvcCore\Ext\Routers\Media
 	 */
 	public function SetMediaSiteVersion ($mediaSiteVersion) {
 		/** @var $this \MvcCore\Ext\Routers\Media */
@@ -145,7 +145,7 @@ trait PropsGettersSetters
 	 * ]);
 	 * ```
 	 * @param array $allowedMediaVersionsAndUrlValues
-	 * @return \MvcCore\Ext\Routers\Media|\MvcCore\Ext\Routers\IMedia
+	 * @return \MvcCore\Ext\Routers\Media
 	 */
 	public function SetAllowedMediaVersionsAndUrlValues ($allowedMediaVersionsAndUrlValues = []) {
 		/** @var $this \MvcCore\Ext\Routers\Media */

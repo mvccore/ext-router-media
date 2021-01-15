@@ -7,14 +7,14 @@
  * For the full copyright and license information, please view
  * the LICENSE.md file that are distributed with this source code.
  *
- * @copyright	Copyright (c) 2016 Tom Flídr (https://github.com/mvccore/mvccore)
- * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
+ * @copyright	Copyright (c) 2016 Tom Flidr (https://github.com/mvccore)
+ * @license		https://mvccore.github.io/docs/mvccore/5.0.0/LICENCE.md
  */
 
 namespace MvcCore\Ext\Routers\Media;
 
-trait UrlByRouteSections
-{
+trait UrlByRouteSections {
+
 	/**
 	 * Complete semi-finished result URL as two section strings and system 
 	 * params array. First section as base section with scheme, domain and base 
@@ -38,7 +38,7 @@ trait UrlByRouteSections
 	 *			"/products-list/cool-product-name/blue?variant[]=L&amp;variant[]=XL", 
 	 *			["media_version" => "m"]
 	 *		]`
-	 * @param \MvcCore\Route|\MvcCore\IRoute &$route
+	 * @param \MvcCore\Route &$route
 	 * @param array $params
 	 * @param string $urlParamRouteName
 	 * @return array `string $urlBaseSection, string $urlPathWithQuerySection, array $systemParams`

@@ -7,14 +7,14 @@
  * For the full copyright and license information, please view
  * the LICENSE.md file that are distributed with this source code.
  *
- * @copyright	Copyright (c) 2016 Tom Flídr (https://github.com/mvccore/mvccore)
- * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
+ * @copyright	Copyright (c) 2016 Tom Flidr (https://github.com/mvccore)
+ * @license		https://mvccore.github.io/docs/mvccore/5.0.0/LICENCE.md
  */
 
 namespace MvcCore\Ext\Routers\Media;
 
-trait UrlByRouteSectionsMedia
-{
+trait UrlByRouteSectionsMedia {
+
 	/**
 	 * Return media site version for result URL as media site version param name 
 	 * string and media site version param value string. 
@@ -28,7 +28,7 @@ trait UrlByRouteSectionsMedia
 	 * version strictly in session. But do not return any media site version for 
 	 * not allowed route methods and do not return any not allowed values for 
 	 * media site version.
-	 * @param \MvcCore\Route|\MvcCore\IRoute $route 
+	 * @param \MvcCore\Route $route 
 	 * @param array $params 
 	 * @param string|NULL $routeMethod 
 	 * @return array `[string $mediaVersionUrlParam, string $mediaSiteUrlValue]`

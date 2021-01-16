@@ -3,23 +3,23 @@
 	"type": "library",
 	"description": "MvcCore - Extension - Router - Media - extension to manage website media versions (full/tablet/mobile) for different templates/CSS/JS files rendering, optionally contained in URL address in the beginning.",
 	"keywords": [
-		"mvc", 
-		"mvccore", 
-		"framework", 
-		"extension", 
-		"plugin", 
-		"plug-in", 
-		"ext", 
-		"router", 
+		"mvc",
+		"mvccore",
+		"framework",
+		"extension",
+		"plugin",
+		"plug-in",
+		"ext",
+		"router",
 		"routing",
-		"routes", 
-		"media", 
-		"site", 
-		"version", 
-		"flag", 
-		"address", 
-		"full", 
-		"tablet", 
+		"routes",
+		"media",
+		"site",
+		"version",
+		"flag",
+		"address",
+		"full",
+		"tablet",
 		"mobile"
 	],
 	"license": ["BSD-3-Clause"],
@@ -29,12 +29,14 @@
 	}],
 	"require": {
 		"php": ">=5.4.0",
-		"mvccore/mvccore": "dev-master",
-		"mvccore/ext-router-extended": "dev-master",
+		"mvccore/mvccore": "^5.0",
+		"mvccore/ext-router-extended": "^5.0",
 		"mobiledetect/mobiledetectlib": "^2.8"
 	},
 	"autoload": {
-		"classmap": ["src/"]
+		"classmap": [
+			"src/"
+		]
 	},
 	"minimum-stability": "dev"
 }

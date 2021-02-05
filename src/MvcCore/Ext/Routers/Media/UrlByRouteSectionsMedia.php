@@ -49,7 +49,12 @@ trait UrlByRouteSectionsMedia {
 		
 		// get url version value from application value (only for allowed request types)
 		$routeMethod = $route->GetMethod();
-		if ($this->routeGetRequestsOnly && $routeMethod !== NULL && $routeMethod !== \MvcCore\IRequest::METHOD_GET) {
+		if (
+			$this->routeGetRequestsOnly && 
+			$routeMethod !== NULL && 
+			$routeMethod !== \MvcCore\IRequest::METHOD_GET && 
+			$routeMethod !== \MvcCore\IRequest::METHOD_HEAD
+		) {
 			$mediaSiteUrlValue = NULL;
 		} else if (isset($this->allowedMediaVersionsAndUrlValues[$mediaSiteVersion])) {
 			$mediaSiteUrlValue = $this->allowedMediaVersionsAndUrlValues[$mediaSiteVersion];

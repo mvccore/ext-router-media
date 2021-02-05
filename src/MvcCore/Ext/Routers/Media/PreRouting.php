@@ -144,7 +144,7 @@ trait PreRouting {
 		} else {
 			if (
 				$this->routeGetRequestsOnly && 
-				$this->request->GetMethod() !== \MvcCore\IRequest::METHOD_GET &&
+				!$this->isGet &&
 				$this->requestMediaSiteVersion !== $this->sessionMediaSiteVersion
 			) {
 				// redirect to session version by `$this->requestMediaSiteVersion`:

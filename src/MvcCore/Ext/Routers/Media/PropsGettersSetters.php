@@ -126,7 +126,7 @@ trait PropsGettersSetters {
 	 * ```
 	 * @return array
 	 */
-	public function & GetAllowedMediaVersionsAndUrlValues () {
+	public function GetAllowedMediaVersionsAndUrlValues () {
 		/** @var $this \MvcCore\Ext\Routers\Media */
 		return $this->allowedMediaVersionsAndUrlValues;
 	}

@@ -100,7 +100,7 @@ interface IMedia {
 	 * ```
 	 * @return array
 	 */
-	public function & GetAllowedMediaVersionsAndUrlValues ();
+	public function GetAllowedMediaVersionsAndUrlValues ();
 
 	/**
 	 * Set URL prefixes prepended before request URL path to describe media site 

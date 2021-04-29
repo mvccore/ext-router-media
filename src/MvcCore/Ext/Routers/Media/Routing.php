@@ -13,6 +13,9 @@
 
 namespace MvcCore\Ext\Routers\Media;
 
+/**
+ * @mixin \MvcCore\Ext\Routers\Media
+ */
 trait Routing {
 
 	/**
@@ -41,7 +44,6 @@ trait Routing {
 	 * @return bool
 	 */
 	public function Route () {
-		/** @var $this \MvcCore\Ext\Routers\Media */
 		$this->internalRequest = $this->request->IsInternalRequest();
 		list($requestCtrlName, $requestActionName) = $this->routeDetectStrategy();
 		if (!$this->internalRequest) {

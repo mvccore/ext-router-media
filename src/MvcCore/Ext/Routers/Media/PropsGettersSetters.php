@@ -15,6 +15,9 @@ namespace MvcCore\Ext\Routers\Media;
 
 use MvcCore\Ext\Routers;
 
+/**
+ * @mixin \MvcCore\Ext\Routers\Media
+ */
 trait PropsGettersSetters {
 
 	/*************************************************************************************
@@ -94,7 +97,6 @@ trait PropsGettersSetters {
 	 * @return string|NULL
 	 */
 	public function GetMediaSiteVersion () {
-		/** @var $this \MvcCore\Ext\Routers\Media */
 		return $this->mediaSiteVersion;
 	}
 	
@@ -106,7 +108,6 @@ trait PropsGettersSetters {
 	 * @return \MvcCore\Ext\Routers\Media
 	 */
 	public function SetMediaSiteVersion ($mediaSiteVersion) {
-		/** @var $this \MvcCore\Ext\Routers\Media */
 		$this->mediaSiteVersion = $mediaSiteVersion;
 		return $this;
 	}
@@ -127,7 +128,6 @@ trait PropsGettersSetters {
 	 * @return array
 	 */
 	public function GetAllowedMediaVersionsAndUrlValues () {
-		/** @var $this \MvcCore\Ext\Routers\Media */
 		return $this->allowedMediaVersionsAndUrlValues;
 	}
 
@@ -148,7 +148,6 @@ trait PropsGettersSetters {
 	 * @return \MvcCore\Ext\Routers\Media
 	 */
 	public function SetAllowedMediaVersionsAndUrlValues ($allowedMediaVersionsAndUrlValues = []) {
-		/** @var $this \MvcCore\Ext\Routers\Media */
 		$this->allowedMediaVersionsAndUrlValues = $allowedMediaVersionsAndUrlValues;
 		return $this;
 	}
@@ -170,7 +169,6 @@ trait PropsGettersSetters {
 	 * @return string|NULL
 	 */
 	protected function redirectMediaGetUrlValueAndUnsetGet ($targetMediaSiteVersion) {
-		/** @var $this \MvcCore\Ext\Routers\Media */
 		$mediaVersionUrlParam = static::URL_PARAM_MEDIA_VERSION;
 		if (isset($this->requestGlobalGet[$mediaVersionUrlParam])) {
 			if ($targetMediaSiteVersion === static::MEDIA_VERSION_FULL) {

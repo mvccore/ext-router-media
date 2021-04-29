@@ -16,6 +16,9 @@ namespace MvcCore\Ext\Routers\Media;
 use MvcCore\Ext\Routers;
 use \Mobile_Detect;
 
+/**
+ * @mixin \MvcCore\Ext\Routers\Media
+ */
 trait PreRouting {
 
 	/**
@@ -36,7 +39,6 @@ trait PreRouting {
 	 * @return bool
 	 */
 	protected function preRouteMedia () {
-		/** @var $this \MvcCore\Ext\Routers\Media */
 		if (!$this->mediaSiteVersion) {
 			if (
 				(($this->isGet && $this->routeGetRequestsOnly) || !$this->routeGetRequestsOnly) &&
@@ -78,7 +80,6 @@ trait PreRouting {
 	 * @return bool
 	 */
 	protected function manageMediaSwitchingAndRedirect () {
-		/** @var $this \MvcCore\Ext\Routers\Media */
 		// unset site key switch param
 		$switchMediaVersionParamName = static::URL_PARAM_SWITCH_MEDIA_VERSION;
 		// it couldn't be there in module extended router, because this variable is 
@@ -98,7 +99,6 @@ trait PreRouting {
 	 * @return void
 	 */
 	protected function manageMediaDetectionAndStoreInSession() {
-		/** @var $this \MvcCore\Ext\Routers\Media */
 		$detect = new \Mobile_Detect();
 		if (
 			array_key_exists(Routers\IMedia::MEDIA_VERSION_MOBILE, $this->allowedMediaVersionsAndUrlValues) && 
@@ -128,7 +128,6 @@ trait PreRouting {
 	 * @return bool
 	 */
 	protected function checkMediaVersionWithUrlAndRedirectIfNecessary() {
-		/** @var $this \MvcCore\Ext\Routers\Media */
 		// if requested media site version is not the same as version in session 
 		// fix it by `$this->stricModeBySession` configuration:
 		if (
@@ -170,7 +169,6 @@ trait PreRouting {
 	 * @return array
 	 */
 	protected function setUpMediaSiteVersionToContextAndSession ($targetMediaSiteVersion) {
-		/** @var $this \MvcCore\Ext\Routers\Media */
 		$this->session->{static::URL_PARAM_MEDIA_VERSION} = $targetMediaSiteVersion;
 		$this->mediaSiteVersion = $targetMediaSiteVersion;
 		return [\MvcCore\Ext\Routers\IMedia::URL_PARAM_MEDIA_VERSION => $targetMediaSiteVersion];

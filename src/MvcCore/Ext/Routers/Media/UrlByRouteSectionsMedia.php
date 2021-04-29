@@ -13,6 +13,9 @@
 
 namespace MvcCore\Ext\Routers\Media;
 
+/**
+ * @mixin \MvcCore\Ext\Routers\Media
+ */
 trait UrlByRouteSectionsMedia {
 
 	/**
@@ -34,7 +37,6 @@ trait UrlByRouteSectionsMedia {
 	 * @return array `[string $mediaVersionUrlParam, string $mediaSiteUrlValue]`
 	 */
 	protected function urlByRouteSectionsMedia (\MvcCore\IRoute $route, array & $params = [], array & $defaultParams = [], $routeMethod = NULL) {
-		/** @var $this \MvcCore\Ext\Routers\Media */
 		// separate `$mediaSiteVersion` from `$params` to work with the version more specifically
 		$mediaVersionUrlParam = static::URL_PARAM_MEDIA_VERSION;
 		if (isset($params[$mediaVersionUrlParam])) {

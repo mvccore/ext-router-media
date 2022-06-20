@@ -140,8 +140,8 @@ trait PropsGettersSetters {
 	 * Example: 
 	 * ```
 	 * \MvcCore\Ext\Routers\Media::GetInstance()->SetAllowedMediaVersionsAndUrlValues([
-	 *		'mobile'	=> 'm', // to have `/m` substring in every mobile URL begin.
-	 *		'full'		=> '',	// to have nothing extra in URL for full site version.
+	 *     'mobile' => 'm', // to have `/m` substring in every mobile URL begin.
+	 *     'full'   => '',  // to have nothing extra in URL for full site version.
 	 * ]);
 	 * ```
 	 * @param array $allowedMediaVersionsAndUrlValues

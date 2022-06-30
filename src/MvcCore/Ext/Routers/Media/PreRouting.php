@@ -115,6 +115,7 @@ trait PreRouting {
 		}
 		$mediaVersionUrlParam = static::URL_PARAM_MEDIA_VERSION;
 		$this->session->{$mediaVersionUrlParam} = $this->mediaSiteVersion;
+		$this->sessionMediaSiteVersion = $this->mediaSiteVersion;
 		$this->firstRequestMediaDetection = $this->mediaSiteVersion === $this->requestMediaSiteVersion;
 	}
 

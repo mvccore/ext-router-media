@@ -98,7 +98,7 @@ trait PreRouting {
 	 * in session namespace for next requests.
 	 * @return void
 	 */
-	protected function manageMediaDetectionAndStoreInSession() {
+	protected function manageMediaDetectionAndStoreInSession () {
 		$detect = new \Mobile_Detect();
 		if (
 			array_key_exists(Routers\IMedia::MEDIA_VERSION_MOBILE, $this->allowedMediaVersionsAndUrlValues) && 

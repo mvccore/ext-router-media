@@ -51,8 +51,10 @@ trait UrlByRouteSectionsMedia {
 		
 		// get url version value from application value (only for allowed request types)
 		$routeMethod = $route->GetMethod();
+		$mediaSiteUrlValue = NULL;
 		if (
 			$this->routeGetRequestsOnly && 
+			/* $routeMethod is something different than GET: */
 			$routeMethod !== NULL && 
 			$routeMethod !== \MvcCore\IRequest::METHOD_GET && 
 			$routeMethod !== \MvcCore\IRequest::METHOD_HEAD
@@ -60,8 +62,7 @@ trait UrlByRouteSectionsMedia {
 			$mediaSiteUrlValue = NULL;
 		} else if (isset($this->allowedMediaVersionsAndUrlValues[$mediaSiteVersion])) {
 			$mediaSiteUrlValue = $this->allowedMediaVersionsAndUrlValues[$mediaSiteVersion];
-		} else {
-			$mediaSiteUrlValue = NULL;
+		} else if ($mediaSiteVersion !== NULL) {
 			trigger_error(
 				'['.get_class().'] Not allowed media site version used to generate url: `'
 				.$mediaSiteVersion.'`. Allowed values: `'

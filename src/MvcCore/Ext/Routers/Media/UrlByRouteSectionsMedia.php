@@ -64,7 +64,7 @@ trait UrlByRouteSectionsMedia {
 			$mediaSiteUrlValue = $this->allowedMediaVersionsAndUrlValues[$mediaSiteVersion];
 		} else if ($mediaSiteVersion !== NULL) {
 			trigger_error(
-				'['.get_class().'] Not allowed media site version used to generate url: `'
+				'['.get_class($this).'] Not allowed media site version used to generate url: `'
 				.$mediaSiteVersion.'`. Allowed values: `'
 				.implode('`, `', array_keys($this->allowedMediaVersionsAndUrlValues)) . '`.',
 				E_USER_ERROR

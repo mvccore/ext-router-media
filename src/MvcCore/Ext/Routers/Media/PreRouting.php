@@ -149,7 +149,8 @@ trait PreRouting {
 			if (
 				$this->routeGetRequestsOnly && 
 				!$this->isGet &&
-				$this->requestMediaSiteVersion !== $this->sessionMediaSiteVersion
+				$this->requestMediaSiteVersion !== $this->sessionMediaSiteVersion &&
+				$this->sessionMediaSiteVersion !== NULL
 			) {
 				// redirect to session version by `$this->requestMediaSiteVersion`:
 				$targetMediaSiteVersion = $this->sessionMediaSiteVersion;
